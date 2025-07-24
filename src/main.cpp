@@ -13,6 +13,8 @@ void printUsage(const char* programName) {
     std::cout << "  " << programName << " <project_root_path> --pattern <pattern> # Scan by pattern\n";
     std::cout << "  " << programName << " <project_root_path> --search <symbol>   # Search for symbols\n";
     std::cout << "  " << programName << " <project_root_path> --search-exact <symbol> # Exact symbol search\n";
+    std::cout << "  " << programName << " <project_root_path> --goto <symbol>     # Find and open symbol in editor\n";
+    std::cout << "  " << programName << " <project_root_path> --export-tags [file] # Export ctags file\n";
     std::cout << "\nExamples:\n";
     std::cout << "  " << programName << " /path/to/project\n";
     std::cout << "  " << programName << " /path/to/project --ext .cpp .hpp .h\n";
@@ -20,32 +22,44 @@ void printUsage(const char* programName) {
     std::cout << "  " << programName << " /path/to/project --pattern test\n";
     std::cout << "  " << programName << " /path/to/project --search FileScanner\n";
     std::cout << "  " << programName << " /path/to/project --search-exact main\n";
+    std::cout << "  " << programName << " /path/to/project --goto main\n";
+    std::cout << "  " << programName << " /path/to/project --export-tags tags.txt\n";
+    std::cout << "\nEditor Integration:\n";
+    std::cout << "  Set EDITOR environment variable or use: vim, code, emacs, nano, subl\n";
+    std::cout << "  Examples: export EDITOR=vim  or  export EDITOR=code\n";
 }
 
-void printSymbolResults(const std::vector<Symbol>& symbols, const SymbolIndex& index) {
+void printSymbolResults(const std::vector<Symbol>& symbols, const SymbolIndex& index, bool useNewFormat = false) {
     if (symbols.empty()) {
         std::cout << "No symbols found.\n";
         return;
     }
     
-    std::cout << "\nFound " << symbols.size() << " symbol(s):\n";
-    std::cout << std::left << std::setw(20) << "SYMBOL" 
-              << std::setw(12) << "TYPE" 
-              << std::setw(8) << "LINE" 
-              << "FILE" << "\n";
-    std::cout << std::string(80, '-') << "\n";
-    
-    for (const auto& symbol : symbols) {
-        std::cout << std::left << std::setw(20) << symbol.name
-                  << std::setw(12) << index.symbolTypeToString(symbol.type)
-                  << std::setw(8) << symbol.line
-                  << symbol.file << "\n";
-        
-        // Show context if available and not too long
-        if (!symbol.context.empty() && symbol.context.length() <= 100) {
-            std::cout << "    " << symbol.context << "\n";
+    if (useNewFormat) {
+        std::cout << "\nFound " << symbols.size() << " symbol(s):\n";
+        for (const auto& symbol : symbols) {
+            std::cout << " - " << FileScanner::formatSymbolLocation(symbol) << "\n";
         }
-        std::cout << "\n";
+    } else {
+        std::cout << "\nFound " << symbols.size() << " symbol(s):\n";
+        std::cout << std::left << std::setw(20) << "SYMBOL" 
+                  << std::setw(12) << "TYPE" 
+                  << std::setw(8) << "LINE" 
+                  << "FILE" << "\n";
+        std::cout << std::string(80, '-') << "\n";
+        
+        for (const auto& symbol : symbols) {
+            std::cout << std::left << std::setw(20) << symbol.name
+                      << std::setw(12) << index.symbolTypeToString(symbol.type)
+                      << std::setw(8) << symbol.line
+                      << symbol.file << "\n";
+            
+            // Show context if available and not too long
+            if (!symbol.context.empty() && symbol.context.length() <= 100) {
+                std::cout << "    " << symbol.context << "\n";
+            }
+            std::cout << "\n";
+        }
     }
 }
 
@@ -67,10 +81,10 @@ int main(int argc, char* argv[]) {
         for (const auto& file : files) {
             std::cout << " - " << file << '\n';
         }
-    } else if (argc >= 4) {
+    } else if (argc >= 3) {
         std::string mode = argv[2];
         
-        if (mode == "--ext") {
+        if (mode == "--ext" && argc >= 4) {
             // Scan by extensions
             std::vector<std::string> extensions;
             for (int i = 3; i < argc; i++) {
@@ -92,7 +106,7 @@ int main(int argc, char* argv[]) {
                 std::cout << " - " << file << '\n';
             }
             
-        } else if (mode == "--name") {
+        } else if (mode == "--name" && argc >= 4) {
             // Scan by filenames
             std::vector<std::string> filenames;
             for (int i = 3; i < argc; i++) {
@@ -128,7 +142,7 @@ int main(int argc, char* argv[]) {
             
             std::vector<Symbol> symbols = FileScanner::searchSymbols(rootPath, query, true);
             SymbolIndex tempIndex; // For the symbolTypeToString method
-            printSymbolResults(symbols, tempIndex);
+            printSymbolResults(symbols, tempIndex, true); // Use new format
             
         } else if (mode == "--search-exact" && argc >= 4) {
             // Symbol search (exact)
@@ -137,7 +151,25 @@ int main(int argc, char* argv[]) {
             
             std::vector<Symbol> symbols = FileScanner::searchSymbols(rootPath, query, false);
             SymbolIndex tempIndex; // For the symbolTypeToString method
-            printSymbolResults(symbols, tempIndex);
+            printSymbolResults(symbols, tempIndex, true); // Use new format
+            
+        } else if (mode == "--goto" && argc >= 4) {
+            // Navigate to symbol
+            std::string symbolName = argv[3];
+            std::string editor = argc >= 5 ? argv[4] : "";
+            
+            std::cout << "Looking for symbol '" << symbolName << "' in: " << rootPath << "\n";
+            
+            if (!FileScanner::gotoSymbol(rootPath, symbolName, editor)) {
+                return 1;
+            }
+            
+        } else if (mode == "--export-tags") {
+            // Export ctags
+            std::string outputFile = argc >= 4 ? argv[3] : "tags.txt";
+            
+            std::cout << "Exporting tags from " << rootPath << " to " << outputFile << "\n";
+            FileScanner::exportTags(rootPath, outputFile);
             
         } else {
             std::cerr << "Invalid arguments.\n";

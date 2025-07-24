@@ -3,6 +3,11 @@
 #include <vector>
 #include <string>
 #include <algorithm>
+#include <fstream>
+#include <iostream>
+#include <cstdlib>
+#include <cstring>
+#include <set>
 
 namespace fs = std::filesystem;
 
@@ -83,4 +88,196 @@ std::vector<Symbol> FileScanner::searchSymbols(const std::string& rootPath, cons
     
     // Search for symbols
     return index.search(query, fuzzy);
+}
+
+bool FileScanner::gotoSymbol(const std::string& rootPath, const std::string& symbolName, const std::string& editor) {
+    // Search for the symbol
+    std::vector<Symbol> symbols = searchSymbols(rootPath, symbolName, false); // Use exact search for goto
+    
+    if (symbols.empty()) {
+        // Try fuzzy search if exact fails
+        symbols = searchSymbols(rootPath, symbolName, true);
+        if (symbols.empty()) {
+            std::cout << "Symbol '" << symbolName << "' not found.\n";
+            return false;
+        }
+    }
+    
+    // Use the first match (best match)
+    const Symbol& symbol = symbols[0];
+    
+    std::cout << "Found: " << formatSymbolLocation(symbol) << "\n";
+    
+    // Open in editor
+    return openInEditor(symbol.file, symbol.line, editor);
+}
+
+void FileScanner::exportTags(const std::string& rootPath, const std::string& outputFile) {
+    // Get all C++ files
+    std::vector<std::string> cppFiles = scanForCppFiles(rootPath);
+    
+    // Build symbol index
+    SymbolIndex index = buildSymbolIndex(cppFiles);
+    
+    // Open output file
+    std::ofstream tagsFile(outputFile);
+    if (!tagsFile.is_open()) {
+        std::cerr << "Error: Could not create tags file: " << outputFile << "\n";
+        return;
+    }
+    
+    // Write ctags header
+    tagsFile << "!_TAG_FILE_FORMAT\t2\t/extended format; --format=1 will not append ;\" to lines/\n";
+    tagsFile << "!_TAG_FILE_SORTED\t1\t/0=unsorted, 1=sorted, 2=foldcase/\n";
+    tagsFile << "!_TAG_PROGRAM_AUTHOR\tCpp-Assist\t/cpp-assist@github.com/\n";
+    tagsFile << "!_TAG_PROGRAM_NAME\tcpp-assist\t//\n";
+    tagsFile << "!_TAG_PROGRAM_VERSION\t1.0\t//\n";
+    
+    // Collect all symbols and sort them
+    std::vector<Symbol> allSymbols;
+    
+    // We need to manually collect symbols since SymbolIndex doesn't expose them
+    // Let's rebuild and extract
+    SymbolIndex tempIndex;
+    tempIndex.buildIndex(cppFiles);
+    
+    // Search for common patterns to get symbols (this is a workaround)
+    std::vector<std::string> commonPatterns = {
+        "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
+        "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
+        "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
+        "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"
+    };
+    
+    std::set<std::string> addedSymbols; // To avoid duplicates
+    
+    for (const auto& pattern : commonPatterns) {
+        auto symbols = tempIndex.search(pattern, true);
+        for (const auto& symbol : symbols) {
+            std::string key = symbol.name + symbol.file + std::to_string(symbol.line);
+            if (addedSymbols.find(key) == addedSymbols.end()) {
+                allSymbols.push_back(symbol);
+                addedSymbols.insert(key);
+            }
+        }
+    }
+    
+    // Sort symbols by name
+    std::sort(allSymbols.begin(), allSymbols.end(),
+              [](const Symbol& a, const Symbol& b) {
+                  return a.name < b.name;
+              });
+    
+    // Write tags in ctags format
+    for (const auto& symbol : allSymbols) {
+        // Format: symbol\tfile\t/^pattern$/;\"\tkind
+        std::string kind;
+        switch (symbol.type) {
+            case SymbolType::FUNCTION: kind = "f"; break;
+            case SymbolType::CLASS: kind = "c"; break;
+            case SymbolType::STRUCT: kind = "s"; break;
+            case SymbolType::VARIABLE: kind = "v"; break;
+            case SymbolType::ENUM: kind = "e"; break;
+            case SymbolType::TYPEDEF: kind = "t"; break;
+            case SymbolType::MACRO: kind = "d"; break;
+            case SymbolType::NAMESPACE: kind = "n"; break;
+            default: kind = "x"; break;
+        }
+        
+        // Convert absolute path to relative
+        std::string relativeFile = symbol.file;
+        if (relativeFile.find(rootPath) == 0) {
+            relativeFile = relativeFile.substr(rootPath.length());
+            if (relativeFile[0] == '/') relativeFile = relativeFile.substr(1);
+        }
+        
+        tagsFile << symbol.name << "\t" << relativeFile << "\t" << symbol.line << ";\"\t" << kind << "\n";
+    }
+    
+    tagsFile.close();
+    std::cout << "Exported " << allSymbols.size() << " symbols to " << outputFile << "\n";
+}
+
+bool FileScanner::openInEditor(const std::string& filePath, int line, const std::string& editor) {
+    std::string editorCmd = editor.empty() ? detectEditor() : editor;
+    
+    if (editorCmd.empty()) {
+        std::cout << "No editor found. Please specify an editor or set EDITOR environment variable.\n";
+        std::cout << "File: " << filePath << " at line " << line << "\n";
+        return false;
+    }
+    
+    // Build command based on editor
+    std::string command;
+    
+    if (editorCmd.find("vim") != std::string::npos || editorCmd.find("nvim") != std::string::npos) {
+        command = editorCmd + " +" + std::to_string(line) + " \"" + filePath + "\"";
+    } else if (editorCmd.find("code") != std::string::npos) {
+        // VS Code
+        command = editorCmd + " --goto \"" + filePath + ":" + std::to_string(line) + "\"";
+    } else if (editorCmd.find("emacs") != std::string::npos) {
+        command = editorCmd + " +" + std::to_string(line) + " \"" + filePath + "\"";
+    } else if (editorCmd.find("nano") != std::string::npos) {
+        command = editorCmd + " +" + std::to_string(line) + " \"" + filePath + "\"";
+    } else if (editorCmd.find("subl") != std::string::npos) {
+        // Sublime Text
+        command = editorCmd + " \"" + filePath + ":" + std::to_string(line) + "\"";
+    } else {
+        // Generic editor - try common format
+        command = editorCmd + " \"" + filePath + "\"";
+    }
+    
+    std::cout << "Opening with: " << command << "\n";
+    
+    // Execute the command
+    int result = std::system(command.c_str());
+    return result == 0;
+}
+
+std::string FileScanner::detectEditor() {
+    // Check environment variables
+    const char* editor = std::getenv("EDITOR");
+    if (editor && strlen(editor) > 0) {
+        return std::string(editor);
+    }
+    
+    const char* visual = std::getenv("VISUAL");
+    if (visual && strlen(visual) > 0) {
+        return std::string(visual);
+    }
+    
+    // Try common editors
+    std::vector<std::string> editors = {
+        "code",     // VS Code
+        "vim",      // Vim
+        "nvim",     // Neovim
+        "emacs",    // Emacs
+        "nano",     // Nano
+        "subl",     // Sublime Text
+        "gedit",    // GEdit
+        "atom"      // Atom
+    };
+    
+    for (const auto& ed : editors) {
+        std::string checkCmd = "which " + ed + " >/dev/null 2>&1";
+        if (std::system(checkCmd.c_str()) == 0) {
+            return ed;
+        }
+    }
+    
+    return "";
+}
+
+std::string FileScanner::formatSymbolLocation(const Symbol& symbol) {
+    SymbolIndex tempIndex;
+    std::string typeStr = tempIndex.symbolTypeToString(symbol.type);
+    
+    // Extract just the filename from the full path
+    std::string filename = symbol.file;
+    size_t lastSlash = filename.find_last_of("/\\");
+    if (lastSlash != std::string::npos) {
+        filename = filename.substr(lastSlash + 1);
+    }
+    
+    return symbol.name + "(" + typeStr + ") in " + filename + ":" + std::to_string(symbol.line);
 }
