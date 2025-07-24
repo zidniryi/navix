@@ -1,1 +1,1 @@
-/usr/bin/c++  -arch arm64 -Wl,-search_paths_first -Wl,-headerpad_max_install_names "CMakeFiles/cpp-assist.dir/src/FileScanner.cpp.o" "CMakeFiles/cpp-assist.dir/src/main.cpp.o" -o cpp-assist
+/usr/bin/c++  -arch arm64 -Wl,-search_paths_first -Wl,-headerpad_max_install_names "CMakeFiles/cpp-assist.dir/src/FileScanner.cpp.o" "CMakeFiles/cpp-assist.dir/src/Symbol.cpp.o" "CMakeFiles/cpp-assist.dir/src/main.cpp.o" -o cpp-assist

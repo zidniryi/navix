@@ -9,6 +9,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/Users/mac/Project/cpp-assist/src/FileScanner.cpp" "CMakeFiles/cpp-assist.dir/src/FileScanner.cpp.o" "gcc" "CMakeFiles/cpp-assist.dir/src/FileScanner.cpp.o.d"
+  "/Users/mac/Project/cpp-assist/src/Symbol.cpp" "CMakeFiles/cpp-assist.dir/src/Symbol.cpp.o" "gcc" "CMakeFiles/cpp-assist.dir/src/Symbol.cpp.o.d"
   "/Users/mac/Project/cpp-assist/src/main.cpp" "CMakeFiles/cpp-assist.dir/src/main.cpp.o" "gcc" "CMakeFiles/cpp-assist.dir/src/main.cpp.o.d"
   )
 

@@ -67,3 +67,20 @@ std::vector<std::string> FileScanner::scanByPattern(const std::string& rootPath,
 
     return files;
 }
+
+SymbolIndex FileScanner::buildSymbolIndex(const std::vector<std::string>& files) {
+    SymbolIndex index;
+    index.buildIndex(files);
+    return index;
+}
+
+std::vector<Symbol> FileScanner::searchSymbols(const std::string& rootPath, const std::string& query, bool fuzzy) {
+    // Get all C++ files in the directory
+    std::vector<std::string> cppFiles = scanForCppFiles(rootPath);
+    
+    // Build symbol index
+    SymbolIndex index = buildSymbolIndex(cppFiles);
+    
+    // Search for symbols
+    return index.search(query, fuzzy);
+}

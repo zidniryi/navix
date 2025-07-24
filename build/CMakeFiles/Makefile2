@@ -85,12 +85,12 @@ clean: CMakeFiles/cpp-assist.dir/clean
 CMakeFiles/cpp-assist.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/cpp-assist.dir/build.make CMakeFiles/cpp-assist.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/cpp-assist.dir/build.make CMakeFiles/cpp-assist.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/mac/Project/cpp-assist/build/CMakeFiles --progress-num=1,2,3 "Built target cpp-assist"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/mac/Project/cpp-assist/build/CMakeFiles --progress-num=1,2,3,4 "Built target cpp-assist"
 .PHONY : CMakeFiles/cpp-assist.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/cpp-assist.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/mac/Project/cpp-assist/build/CMakeFiles 3
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/mac/Project/cpp-assist/build/CMakeFiles 4
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/cpp-assist.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/mac/Project/cpp-assist/build/CMakeFiles 0
 .PHONY : CMakeFiles/cpp-assist.dir/rule
@@ -102,7 +102,7 @@ cpp-assist: CMakeFiles/cpp-assist.dir/rule
 # codegen rule for target.
 CMakeFiles/cpp-assist.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/cpp-assist.dir/build.make CMakeFiles/cpp-assist.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/mac/Project/cpp-assist/build/CMakeFiles --progress-num=1,2,3 "Finished codegen for target cpp-assist"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/mac/Project/cpp-assist/build/CMakeFiles --progress-num=1,2,3,4 "Finished codegen for target cpp-assist"
 .PHONY : CMakeFiles/cpp-assist.dir/codegen
 
 # clean rule for target.

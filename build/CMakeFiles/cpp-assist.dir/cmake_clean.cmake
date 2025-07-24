@@ -1,6 +1,8 @@
 file(REMOVE_RECURSE
   "CMakeFiles/cpp-assist.dir/src/FileScanner.cpp.o"
   "CMakeFiles/cpp-assist.dir/src/FileScanner.cpp.o.d"
+  "CMakeFiles/cpp-assist.dir/src/Symbol.cpp.o"
+  "CMakeFiles/cpp-assist.dir/src/Symbol.cpp.o.d"
   "CMakeFiles/cpp-assist.dir/src/main.cpp.o"
   "CMakeFiles/cpp-assist.dir/src/main.cpp.o.d"
   "cpp-assist"

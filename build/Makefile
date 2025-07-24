@@ -153,6 +153,30 @@ src/FileScanner.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/cpp-assist.dir/build.make CMakeFiles/cpp-assist.dir/src/FileScanner.cpp.s
 .PHONY : src/FileScanner.cpp.s
 
+src/Symbol.o: src/Symbol.cpp.o
+.PHONY : src/Symbol.o
+
+# target to build an object file
+src/Symbol.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cpp-assist.dir/build.make CMakeFiles/cpp-assist.dir/src/Symbol.cpp.o
+.PHONY : src/Symbol.cpp.o
+
+src/Symbol.i: src/Symbol.cpp.i
+.PHONY : src/Symbol.i
+
+# target to preprocess a source file
+src/Symbol.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cpp-assist.dir/build.make CMakeFiles/cpp-assist.dir/src/Symbol.cpp.i
+.PHONY : src/Symbol.cpp.i
+
+src/Symbol.s: src/Symbol.cpp.s
+.PHONY : src/Symbol.s
+
+# target to generate assembly for a file
+src/Symbol.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cpp-assist.dir/build.make CMakeFiles/cpp-assist.dir/src/Symbol.cpp.s
+.PHONY : src/Symbol.cpp.s
+
 src/main.o: src/main.cpp.o
 .PHONY : src/main.o
 
@@ -189,6 +213,9 @@ help:
 	@echo "... src/FileScanner.o"
 	@echo "... src/FileScanner.i"
 	@echo "... src/FileScanner.s"
+	@echo "... src/Symbol.o"
+	@echo "... src/Symbol.i"
+	@echo "... src/Symbol.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
