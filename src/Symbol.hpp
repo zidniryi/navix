@@ -28,6 +28,16 @@ enum class SymbolType {
     JS_EXPORT,
     JS_MODULE,
     
+    // Python symbols
+    PY_FUNCTION,
+    PY_CLASS,
+    PY_METHOD,
+    PY_VARIABLE,
+    PY_IMPORT,
+    PY_FROM_IMPORT,
+    PY_DECORATOR,
+    PY_LAMBDA,
+    
     UNKNOWN
 };
 
@@ -60,7 +70,9 @@ private:
     void parseFile(const std::string& filePath);
     void parseLineForSymbols(const std::string& line, const std::string& filePath, int lineNumber);
     void parseTypeScriptJavaScript(const std::string& line, const std::string& filePath, int lineNumber);
+    void parsePython(const std::string& line, const std::string& filePath, int lineNumber);
     bool isTypeScriptOrJavaScript(const std::string& filePath) const;
+    bool isPython(const std::string& filePath) const;
     int levenshteinDistance(const std::string& s1, const std::string& s2) const;
     bool isPrefixMatch(const std::string& symbol, const std::string& query) const;
     

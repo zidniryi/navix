@@ -21,7 +21,9 @@ std::vector<std::string> FileScanner::scanForAllSupportedFiles(const std::string
         // C++ files
         ".cpp", ".hpp", ".h", ".cc", ".cxx",
         // TypeScript/JavaScript files
-        ".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs"
+        ".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs",
+        // Python files
+        ".py", ".pyw", ".pyi"
     };
     return scanByExtensions(rootPath, allExtensions);
 }
@@ -29,6 +31,11 @@ std::vector<std::string> FileScanner::scanForAllSupportedFiles(const std::string
 std::vector<std::string> FileScanner::scanForTypeScriptJavaScript(const std::string& rootPath) {
     std::vector<std::string> tsJsExtensions = {".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs"};
     return scanByExtensions(rootPath, tsJsExtensions);
+}
+
+std::vector<std::string> FileScanner::scanForPython(const std::string& rootPath) {
+    std::vector<std::string> pythonExtensions = {".py", ".pyw", ".pyi"};
+    return scanByExtensions(rootPath, pythonExtensions);
 }
 
 std::vector<std::string> FileScanner::scanByExtensions(const std::string& rootPath, const std::vector<std::string>& extensions) {
@@ -95,7 +102,7 @@ SymbolIndex FileScanner::buildSymbolIndex(const std::vector<std::string>& files)
 }
 
 std::vector<Symbol> FileScanner::searchSymbols(const std::string& rootPath, const std::string& query, bool fuzzy) {
-    // Get all supported files in the directory (C++, TypeScript, JavaScript)
+    // Get all supported files in the directory (C++, TypeScript, JavaScript, Python)
     std::vector<std::string> allFiles = scanForAllSupportedFiles(rootPath);
     
     // Build symbol index
@@ -190,14 +197,17 @@ void FileScanner::exportTags(const std::string& rootPath, const std::string& out
         switch (symbol.type) {
             case SymbolType::FUNCTION: 
             case SymbolType::JS_FUNCTION: 
-            case SymbolType::JS_ARROW_FUNCTION: kind = "f"; break;
+            case SymbolType::JS_ARROW_FUNCTION:
+            case SymbolType::PY_FUNCTION: kind = "f"; break;
             case SymbolType::CLASS: 
-            case SymbolType::JS_CLASS: kind = "c"; break;
+            case SymbolType::JS_CLASS:
+            case SymbolType::PY_CLASS: kind = "c"; break;
             case SymbolType::STRUCT: kind = "s"; break;
             case SymbolType::VARIABLE: 
             case SymbolType::JS_CONST: 
             case SymbolType::JS_LET: 
-            case SymbolType::JS_VAR: kind = "v"; break;
+            case SymbolType::JS_VAR:
+            case SymbolType::PY_VARIABLE: kind = "v"; break;
             case SymbolType::ENUM: kind = "e"; break;
             case SymbolType::TYPEDEF: 
             case SymbolType::JS_TYPE: kind = "t"; break;
@@ -205,7 +215,11 @@ void FileScanner::exportTags(const std::string& rootPath, const std::string& out
             case SymbolType::NAMESPACE: kind = "n"; break;
             case SymbolType::JS_INTERFACE: kind = "i"; break;
             case SymbolType::JS_IMPORT: 
-            case SymbolType::JS_EXPORT: kind = "m"; break;
+            case SymbolType::JS_EXPORT:
+            case SymbolType::PY_IMPORT:
+            case SymbolType::PY_FROM_IMPORT: kind = "m"; break;
+            case SymbolType::PY_DECORATOR: kind = "a"; break;
+            case SymbolType::PY_LAMBDA: kind = "l"; break;
             default: kind = "x"; break;
         }
         

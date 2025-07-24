@@ -7,10 +7,11 @@
 [![C++17](https://img.shields.io/badge/C%2B%2B-17-blue.svg)](https://en.wikipedia.org/wiki/C%2B%2B17)
 [![TypeScript](https://img.shields.io/badge/TypeScript-Support-blue.svg)](https://www.typescriptlang.org/)
 [![JavaScript](https://img.shields.io/badge/JavaScript-Support-yellow.svg)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+[![Python](https://img.shields.io/badge/Python-Support-blue.svg)](https://python.org/)
 
 > 🎯 **Find. Navigate. Code.**
 > 
-> A powerful, cross-platform code navigation and indexing tool that supports C++, TypeScript, and JavaScript. Built for developers who value speed and simplicity.
+> A powerful, cross-platform code navigation and indexing tool that supports C++, TypeScript, JavaScript, and Python. Built for developers who value speed and simplicity.
 
 ## ✨ Features
 
@@ -18,6 +19,7 @@
 - **C++**: `.cpp`, `.hpp`, `.h`, `.cc`, `.cxx`
 - **TypeScript**: `.ts`, `.tsx`
 - **JavaScript**: `.js`, `.jsx`, `.mjs`, `.cjs`
+- **Python**: `.py`, `.pyw`, `.pyi`
 
 ### ⚡ **Lightning-Fast Symbol Indexing**
 - Intelligent fuzzy search with ranking
@@ -36,6 +38,12 @@
 - Classes, Interfaces, Types
 - Variables (const, let, var)
 - Imports, Exports
+
+**Python Symbols:**
+- Functions, Classes, Methods
+- Variables, Decorators
+- Imports (from & import)
+- Lambda functions
 
 ### 🚀 **Direct Editor Integration**
 - **Supported Editors**: vim, nvim, VS Code, emacs, nano, Sublime Text, Atom
@@ -66,7 +74,7 @@
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/navix.git
+git clone https://github.com/zidniryi/navix.git
 cd navix
 
 # Create build directory
@@ -103,6 +111,7 @@ navix <project_root>
 # Language-specific scanning
 navix <project_root> --cpp              # C++ files only
 navix <project_root> --ts               # TypeScript/JavaScript files
+navix <project_root> --py               # Python files only
 
 # Symbol search
 navix <project_root> --search <symbol>  # Smart fuzzy search
@@ -121,10 +130,10 @@ navix <project_root> --export-tags my.tags  # Custom filename
 
 ```bash
 # Filter by extensions
-navix . --ext .cpp .hpp .ts
+navix . --ext .cpp .hpp .ts .py
 
 # Find specific files
-navix . --name main.cpp package.json
+navix . --name main.cpp package.json app.py
 
 # Pattern matching
 navix . --pattern test
@@ -153,6 +162,7 @@ navix . --search-exact AppComponent
 # Example output:
 # 📍 AppComponent(js-class) in App.tsx:15
 # 📍 App(js-function) in main.ts:8
+# 📍 main(py-function) in app.py:23
 ```
 
 ### Navigate to Code
@@ -164,7 +174,7 @@ navix . --goto main
 navix . --goto AppComponent code
 
 # Open in vim
-navix . --goto handleClick vim
+navix . --goto process_data vim
 ```
 
 ### IDE Integration
@@ -188,6 +198,10 @@ navix . --cpp
 # TypeScript/React projects  
 navix . --ts
 # Found symbols: components, interfaces, types...
+
+# Python projects
+navix . --py
+# Found symbols: functions, classes, decorators...
 
 # Mixed codebases
 navix .
@@ -232,23 +246,27 @@ navix . --goto SymbolName
 ### Symbol Search Results
 ```
 ┌─ RESULTS ──────────────────────────────────────────────────────────────────┐
-│ Found 5 symbol(s):
+│ Found 7 symbol(s):
 │ 📍 AppComponent(js-class) in App.tsx:15
 │ 📍 App(js-function) in main.ts:8  
 │ 📍 AppRouter(js-class) in router.ts:23
 │ 📍 appConfig(const) in config.js:5
 │ 📍 Application(class) in main.cpp:12
+│ 📍 app_init(py-function) in app.py:45
+│ 📍 AppHandler(py-class) in handlers.py:8
 └────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ### File Scanning
 ```
 ┌─ FILES ────────────────────────────────────────────────────────────────────┐
-│ Found 847 matching files:
+│ Found 1247 matching files:
 │ 📄 src/components/App.tsx
 │ 📄 src/utils/helpers.ts
 │ 📄 src/main.cpp
 │ 📄 include/parser.hpp
+│ 📄 scripts/deploy.py
+│ 📄 tests/test_api.py
 │ ...
 └────────────────────────────────────────────────────────────────────────────┘
 ```
@@ -264,6 +282,10 @@ navix . --goto SymbolName
 | | `js-class`, `interface`, `type` | Type system |
 | | `const`, `let`, `var` | Variables |
 | **JavaScript** | `import`, `export` | Module system |
+| **Python** | `py-function`, `py-class` | Core Python constructs |
+| | `py-variable`, `py-decorator` | Variables & decorators |
+| | `py-import`, `py-from-import` | Module imports |
+| | `py-lambda` | Lambda functions |
 
 ## 🤝 Contributing
 
@@ -293,8 +315,8 @@ This project is licensed under the **MIT License**.
 
 ## 📞 Support
 
-- **GitHub Issues**: [Report bugs & request features](https://github.com/your-username/navix/issues)
-- **Discussions**: [Community discussions](https://github.com/your-username/navix/discussions)
+- **GitHub Issues**: [Report bugs & request features](https://github.com/zidniryi/navix/issues)
+- **Discussions**: [Community discussions](https://github.com/zidniryi/navix/discussions)
 - **Documentation**: This README and inline code comments
 
 ---

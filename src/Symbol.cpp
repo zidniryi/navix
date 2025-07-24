@@ -90,6 +90,11 @@ bool SymbolIndex::isTypeScriptOrJavaScript(const std::string& filePath) const {
            ext == ".mjs" || ext == ".cjs" || ext == ".d.ts";
 }
 
+bool SymbolIndex::isPython(const std::string& filePath) const {
+    std::string ext = filePath.substr(filePath.find_last_of('.'));
+    return ext == ".py" || ext == ".pyw" || ext == ".pyi";
+}
+
 void SymbolIndex::parseFile(const std::string& filePath) {
     std::ifstream file(filePath);
     if (!file.is_open()) {
@@ -106,18 +111,78 @@ void SymbolIndex::parseFile(const std::string& filePath) {
                       [](unsigned char ch) { return !std::isspace(ch); }));
         
         // Skip comments and empty lines
-        if (trimmed.empty() || trimmed.substr(0, 2) == "//" || trimmed[0] == '#') {
+        if (trimmed.empty() || trimmed.substr(0, 2) == "//" || 
+            (trimmed[0] == '#' && !isPython(filePath))) {
             lineNumber++;
             continue;
         }
         
         // Parse based on file type
-        if (isTypeScriptOrJavaScript(filePath)) {
+        if (isPython(filePath)) {
+            parsePython(trimmed, filePath, lineNumber);
+        } else if (isTypeScriptOrJavaScript(filePath)) {
             parseTypeScriptJavaScript(trimmed, filePath, lineNumber);
         } else {
             parseLineForSymbols(trimmed, filePath, lineNumber);
         }
         lineNumber++;
+    }
+}
+
+void SymbolIndex::parsePython(const std::string& line, const std::string& filePath, int lineNumber) {
+    std::smatch match;
+    
+    // Function definitions: def function_name(
+    std::regex functionRegex(R"(\bdef\s+(\w+)\s*\()");
+    if (std::regex_search(line, match, functionRegex)) {
+        std::string name = match[1].str();
+        addSymbol(Symbol(name, SymbolType::PY_FUNCTION, filePath, lineNumber, line));
+    }
+    
+    // Class definitions: class ClassName
+    std::regex classRegex(R"(\bclass\s+(\w+))");
+    if (std::regex_search(line, match, classRegex)) {
+        std::string name = match[1].str();
+        addSymbol(Symbol(name, SymbolType::PY_CLASS, filePath, lineNumber, line));
+    }
+    
+    // Variable assignments: variable_name = 
+    std::regex variableRegex(R"(^(\w+)\s*=\s*)");
+    if (std::regex_search(line, match, variableRegex)) {
+        std::string name = match[1].str();
+        // Filter out common keywords and imports
+        if (name != "import" && name != "from" && name != "if" && name != "for" && 
+            name != "while" && name != "try" && name != "except" && name != "with") {
+            addSymbol(Symbol(name, SymbolType::PY_VARIABLE, filePath, lineNumber, line));
+        }
+    }
+    
+    // Import statements: import module or from module import name
+    std::regex importRegex(R"(\bimport\s+(\w+))");
+    if (std::regex_search(line, match, importRegex)) {
+        std::string name = match[1].str();
+        addSymbol(Symbol(name, SymbolType::PY_IMPORT, filePath, lineNumber, line));
+    }
+    
+    // From imports: from module import name
+    std::regex fromImportRegex(R"(\bfrom\s+\w+\s+import\s+(\w+))");
+    if (std::regex_search(line, match, fromImportRegex)) {
+        std::string name = match[1].str();
+        addSymbol(Symbol(name, SymbolType::PY_FROM_IMPORT, filePath, lineNumber, line));
+    }
+    
+    // Decorators: @decorator_name
+    std::regex decoratorRegex(R"(@(\w+))");
+    if (std::regex_search(line, match, decoratorRegex)) {
+        std::string name = match[1].str();
+        addSymbol(Symbol(name, SymbolType::PY_DECORATOR, filePath, lineNumber, line));
+    }
+    
+    // Lambda functions: variable = lambda
+    std::regex lambdaRegex(R"((\w+)\s*=\s*lambda)");
+    if (std::regex_search(line, match, lambdaRegex)) {
+        std::string name = match[1].str();
+        addSymbol(Symbol(name, SymbolType::PY_LAMBDA, filePath, lineNumber, line));
     }
 }
 
@@ -305,6 +370,16 @@ std::string SymbolIndex::symbolTypeToString(SymbolType type) const {
         case SymbolType::JS_IMPORT: return "import";
         case SymbolType::JS_EXPORT: return "export";
         case SymbolType::JS_MODULE: return "module";
+        
+        // Python symbols
+        case SymbolType::PY_FUNCTION: return "py-function";
+        case SymbolType::PY_CLASS: return "py-class";
+        case SymbolType::PY_METHOD: return "py-method";
+        case SymbolType::PY_VARIABLE: return "py-variable";
+        case SymbolType::PY_IMPORT: return "py-import";
+        case SymbolType::PY_FROM_IMPORT: return "py-from-import";
+        case SymbolType::PY_DECORATOR: return "py-decorator";
+        case SymbolType::PY_LAMBDA: return "py-lambda";
         
         case SymbolType::UNKNOWN: return "unknown";
         default: return "unknown";
