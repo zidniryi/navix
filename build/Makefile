@@ -177,6 +177,30 @@ src/Symbol.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/navix.dir/build.make CMakeFiles/navix.dir/src/Symbol.cpp.s
 .PHONY : src/Symbol.cpp.s
 
+src/TUI.o: src/TUI.cpp.o
+.PHONY : src/TUI.o
+
+# target to build an object file
+src/TUI.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/navix.dir/build.make CMakeFiles/navix.dir/src/TUI.cpp.o
+.PHONY : src/TUI.cpp.o
+
+src/TUI.i: src/TUI.cpp.i
+.PHONY : src/TUI.i
+
+# target to preprocess a source file
+src/TUI.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/navix.dir/build.make CMakeFiles/navix.dir/src/TUI.cpp.i
+.PHONY : src/TUI.cpp.i
+
+src/TUI.s: src/TUI.cpp.s
+.PHONY : src/TUI.s
+
+# target to generate assembly for a file
+src/TUI.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/navix.dir/build.make CMakeFiles/navix.dir/src/TUI.cpp.s
+.PHONY : src/TUI.cpp.s
+
 src/main.o: src/main.cpp.o
 .PHONY : src/main.o
 
@@ -216,6 +240,9 @@ help:
 	@echo "... src/Symbol.o"
 	@echo "... src/Symbol.i"
 	@echo "... src/Symbol.s"
+	@echo "... src/TUI.o"
+	@echo "... src/TUI.i"
+	@echo "... src/TUI.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"

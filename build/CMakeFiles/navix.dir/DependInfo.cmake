@@ -10,6 +10,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/Users/mac/Project/cpp-assist/src/FileScanner.cpp" "CMakeFiles/navix.dir/src/FileScanner.cpp.o" "gcc" "CMakeFiles/navix.dir/src/FileScanner.cpp.o.d"
   "/Users/mac/Project/cpp-assist/src/Symbol.cpp" "CMakeFiles/navix.dir/src/Symbol.cpp.o" "gcc" "CMakeFiles/navix.dir/src/Symbol.cpp.o.d"
+  "/Users/mac/Project/cpp-assist/src/TUI.cpp" "CMakeFiles/navix.dir/src/TUI.cpp.o" "gcc" "CMakeFiles/navix.dir/src/TUI.cpp.o.d"
   "/Users/mac/Project/cpp-assist/src/main.cpp" "CMakeFiles/navix.dir/src/main.cpp.o" "gcc" "CMakeFiles/navix.dir/src/main.cpp.o.d"
   )
 

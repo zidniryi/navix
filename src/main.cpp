@@ -4,6 +4,7 @@
 #include <iomanip>
 #include "FileScanner.hpp"
 #include "Symbol.hpp"
+#include "TUI.hpp"
 
 void printUsage(const char* programName) {
     std::cout << "\n";
@@ -18,7 +19,9 @@ void printUsage(const char* programName) {
     
     std::cout << "┌─ USAGE ────────────────────────────────────────────────────────────────────┐\n";
     std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <project_root>") << "  Scan all supported files    │\n";
-    std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --cpp") << "  Scan your files          │\n";
+    std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --tui") << "  Interactive TUI mode        │\n";
+    std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --cpp") << "  Scan C++ files only         │\n";
+    std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --ts") << "  Scan TypeScript/JS files    │\n";
     std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --py") << "  Scan Python files only      │\n";
     std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --search <symbol>") << "  Smart symbol search         │\n";
     std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --goto <symbol>") << "  Navigate to symbol          │\n";
@@ -27,6 +30,7 @@ void printUsage(const char* programName) {
     
     std::cout << "┌─ EXAMPLES ─────────────────────────────────────────────────────────────────┐\n";
     std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " .") << "     Scan all files      │\n";
+    std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --tui") << "         Interactive mode    │\n";
     std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --cpp") << "          C++ files only     │\n";
     std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --ts") << "           TypeScript/JS      │\n";
     std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --py") << "           Python files      │\n";
@@ -39,12 +43,19 @@ void printUsage(const char* programName) {
     std::cout << "│ ⚡ Multi-language support (C++,TS,JS,PY) 🎯 Intelligent fuzzy search      │\n";
     std::cout << "│ 🚀 Direct editor navigation             📋 Universal ctags export        │\n";
     std::cout << "│ 🛠️  Auto-detect editors (vim, vscode)   🎨 Beautiful, readable output    │\n";
+    std::cout << "│ 🖥️  Interactive TUI with arrow keys     ⌨️  Real-time file preview       │\n";
     std::cout << "└────────────────────────────────────────────────────────────────────────────┘\n\n";
     
     std::cout << "┌─ SUPPORTED FILES ──────────────────────────────────────────────────────────┐\n";
     std::cout << "│ C++: .cpp • .hpp • .h • .cc • .cxx                                         │\n";
     std::cout << "│ TypeScript/JavaScript: .ts • .tsx • .js • .jsx • .mjs • .cjs              │\n";
     std::cout << "│ Python: .py • .pyw • .pyi                                                  │\n";
+    std::cout << "└────────────────────────────────────────────────────────────────────────────┘\n\n";
+    
+    std::cout << "┌─ TUI CONTROLS ─────────────────────────────────────────────────────────────┐\n";
+    std::cout << "│ ↑↓: Navigate items  │  Enter: Open file/symbol  │  Tab: Switch Files/Symbols │\n";
+    std::cout << "│ /: Search           │  p: Toggle preview        │  q/ESC: Quit TUI           │\n";
+    std::cout << "│ Backspace: Delete   │  Type: Filter results     │  Auto file preview         │\n";
     std::cout << "└────────────────────────────────────────────────────────────────────────────┘\n\n";
     
     std::cout << "┌─ EDITORS ──────────────────────────────────────────────────────────────────┐\n";
@@ -115,7 +126,20 @@ int main(int argc, char* argv[]) {
     } else if (argc >= 3) {
         std::string mode = argv[2];
         
-        if (mode == "--cpp") {
+        if (mode == "--tui") {
+            // Launch TUI mode
+            std::cout << "🚀 Launching Interactive TUI mode...\n";
+            try {
+                TUI tui;
+                tui.run(rootPath);
+            } catch (const std::exception& e) {
+                std::cerr << "❌ TUI Error: " << e.what() << "\n";
+                std::cerr << "Make sure ncurses is installed and terminal supports TUI.\n";
+                return 1;
+            }
+            return 0;
+            
+        } else if (mode == "--cpp") {
             // Scan C++ files only
             files = FileScanner::scanForCppFiles(rootPath);
             std::cout << "🔍 Scanning for C++ files in: " << rootPath << "\n";

@@ -8,10 +8,11 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-Support-blue.svg)](https://www.typescriptlang.org/)
 [![JavaScript](https://img.shields.io/badge/JavaScript-Support-yellow.svg)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
 [![Python](https://img.shields.io/badge/Python-Support-blue.svg)](https://python.org/)
+[![ncurses](https://img.shields.io/badge/TUI-ncurses-green.svg)](https://invisible-island.net/ncurses/)
 
 > 🎯 **Find. Navigate. Code.**
 > 
-> A powerful, cross-platform code navigation and indexing tool that supports C++, TypeScript, JavaScript, and Python. Built for developers who value speed and simplicity.
+> A powerful, cross-platform code navigation and indexing tool that supports C++, TypeScript, JavaScript, and Python. Built for developers who value speed and simplicity. Features both CLI and interactive TUI modes.
 
 ## ✨ Features
 
@@ -26,6 +27,14 @@
 - Exact symbol matching
 - Cross-language symbol discovery
 - Real-time file scanning
+
+### 🖥️ **Interactive TUI Mode**
+- **ncurses-based** text interface
+- **Arrow key navigation** with smooth scrolling
+- **Real-time fuzzy search** as you type
+- **Dual-pane layout** with file preview
+- **Tab switching** between files and symbols
+- **Multi-language** symbol browsing
 
 ### 🎯 **Smart Symbol Recognition**
 **C++ Symbols:**
@@ -68,7 +77,26 @@
 ### Prerequisites
 - **C++17** compatible compiler
 - **CMake 3.10+**
+- **ncurses library** (for TUI mode)
 - **Git**
+
+### Install Dependencies
+
+**macOS (Homebrew):**
+```bash
+brew install ncurses cmake
+```
+
+**Ubuntu/Debian:**
+```bash
+sudo apt update
+sudo apt install libncurses5-dev libncursesw5-dev cmake build-essential
+```
+
+**Fedora/RHEL:**
+```bash
+sudo dnf install ncurses-devel cmake gcc-c++
+```
 
 ### Build from Source
 
@@ -93,6 +121,9 @@ make
 # Test in current directory
 ./navix .
 
+# Launch interactive TUI
+./navix . --tui
+
 # Search for symbols
 ./navix . --search main
 
@@ -107,6 +138,9 @@ make
 ```bash
 # Scan all supported files
 navix <project_root>
+
+# Interactive TUI mode (recommended!)
+navix <project_root> --tui
 
 # Language-specific scanning
 navix <project_root> --cpp              # C++ files only
@@ -139,6 +173,49 @@ navix . --name main.cpp package.json app.py
 navix . --pattern test
 ```
 
+## 🖥️ Interactive TUI Mode
+
+The TUI (Text User Interface) provides the best Navix experience with real-time navigation and preview.
+
+### Launch TUI
+```bash
+navix . --tui
+```
+
+### TUI Controls
+
+| Key | Action | Description |
+|-----|--------|-------------|
+| `↑` `↓` | Navigate | Move through files/symbols |
+| `Enter` | Open | Open selected file or jump to symbol |
+| `Tab` | Switch Mode | Toggle between Files and Symbols view |
+| `/` | Search | Clear search and start new query |
+| `Backspace` | Delete | Remove character from search |
+| `p` | Toggle Preview | Show/hide file preview pane |
+| `q` / `ESC` | Quit | Exit TUI mode |
+| `Type` | Filter | Real-time fuzzy search |
+
+### TUI Features
+
+#### **Dual-Pane Layout**
+- **Left Pane**: File list or symbol list
+- **Right Pane**: Live file preview (50 lines)
+- **Split Screen**: Optimal use of terminal space
+
+#### **Real-Time Search**
+- **Fuzzy Matching**: Type to filter results instantly
+- **Smart Scoring**: Best matches appear first
+- **Live Preview**: See file contents as you navigate
+
+#### **Two Modes**
+- **Files Mode**: Browse and search all project files
+- **Symbols Mode**: Navigate functions, classes, variables across languages
+
+#### **Visual Feedback**
+- **Color Coding**: Different colors for file types and symbol types
+- **Status Bar**: Shows current mode, search query, and counts
+- **Scroll Indicators**: Visual cues for long lists
+
 ## 🌟 Examples
 
 ### Quick Start
@@ -146,8 +223,25 @@ navix . --pattern test
 # Navigate to your project
 cd /path/to/your/project
 
-# Scan and index all files
-navix .
+# Launch interactive mode (recommended)
+navix . --tui
+```
+
+### TUI Workflow
+```bash
+# 1. Launch TUI
+navix . --tui
+
+# 2. Search for files
+#    Type: main.cpp
+#    Result: Shows matching files with preview
+
+# 3. Switch to symbols (Tab key)
+#    Type: App
+#    Result: Shows all symbols containing "App"
+
+# 4. Navigate with arrow keys
+#    Enter: Opens file at symbol location
 ```
 
 ### Find Symbols
@@ -243,6 +337,32 @@ navix . --goto SymbolName
 
 ## 📊 Output Examples
 
+### TUI Interface
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                         🚀 NAVIX - Navigate & Index                        │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─ Search Files ──────────────────┐
+│ Search: App                     │
+└─────────────────────────────────┘
+
+┌─ Files ─────────────────────────┐  ┌─ Preview ───────────────────────┐
+│ > src/App.tsx                   │  │ import React from 'react';      │
+│   src/AppRouter.tsx             │  │ import './App.css';             │
+│   src/components/AppHeader.tsx  │  │                                 │
+│   src/utils/AppConfig.js        │  │ function App() {                │
+│   tests/App.test.ts             │  │   return (                      │
+│   ...                           │  │     <div className="App">       │
+└─────────────────────────────────┘  │       <header>                  │
+                                     │         <h1>Welcome</h1>        │
+Files: 5/247 | Search: App    [FILES] │       </header>                 │
+↑↓:Navigate | Enter:Open | Tab:Switch │     </div>                      │
+                                     │   );                            │
+                                     │ }                               │
+                                     └─────────────────────────────────┘
+```
+
 ### Symbol Search Results
 ```
 ┌─ RESULTS ──────────────────────────────────────────────────────────────────┐
@@ -287,6 +407,24 @@ navix . --goto SymbolName
 | | `py-import`, `py-from-import` | Module imports |
 | | `py-lambda` | Lambda functions |
 
+## 💡 Tips & Best Practices
+
+### TUI Tips
+- **Start with TUI**: Always try `navix . --tui` first for the best experience
+- **Use fuzzy search**: Type partial names for quick filtering
+- **Preview files**: Keep preview pane open to understand context
+- **Switch modes**: Use Tab to toggle between file and symbol browsing
+
+### Performance Tips
+- **Project scope**: Run Navix from your project root for best results
+- **Language focus**: Use `--cpp`, `--ts`, `--py` for language-specific projects
+- **Editor integration**: Export tags for seamless IDE/editor integration
+
+### Workflow Integration
+- **Tag generation**: Regular `navix . --export-tags` for editor users
+- **Symbol navigation**: Use `--goto` for quick symbol jumping
+- **Search refinement**: Start broad, then narrow with exact search
+
 ## 🤝 Contributing
 
 We welcome contributions! Whether you're fixing bugs, adding features, or improving documentation, your help makes Navix better for everyone.
@@ -309,7 +447,8 @@ This project is licensed under the **MIT License**.
 ## 🙏 Acknowledgments
 
 - **Inspired by** ctags, cscope, and modern language servers
-- **Built with** modern C++17 and standard libraries
+- **Built with** modern C++17 and ncurses libraries
+- **TUI powered by** ncurses for cross-platform terminal interfaces
 - **Designed for** developer productivity and code navigation
 - **Made with ❤️** for developers who value speed and simplicity
 

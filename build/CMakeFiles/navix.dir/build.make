@@ -72,10 +72,24 @@ include CMakeFiles/navix.dir/flags.make
 CMakeFiles/navix.dir/codegen:
 .PHONY : CMakeFiles/navix.dir/codegen
 
+CMakeFiles/navix.dir/src/main.cpp.o: CMakeFiles/navix.dir/flags.make
+CMakeFiles/navix.dir/src/main.cpp.o: /Users/mac/Project/cpp-assist/src/main.cpp
+CMakeFiles/navix.dir/src/main.cpp.o: CMakeFiles/navix.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/mac/Project/cpp-assist/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/navix.dir/src/main.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/navix.dir/src/main.cpp.o -MF CMakeFiles/navix.dir/src/main.cpp.o.d -o CMakeFiles/navix.dir/src/main.cpp.o -c /Users/mac/Project/cpp-assist/src/main.cpp
+
+CMakeFiles/navix.dir/src/main.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/navix.dir/src/main.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/mac/Project/cpp-assist/src/main.cpp > CMakeFiles/navix.dir/src/main.cpp.i
+
+CMakeFiles/navix.dir/src/main.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/navix.dir/src/main.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/mac/Project/cpp-assist/src/main.cpp -o CMakeFiles/navix.dir/src/main.cpp.s
+
 CMakeFiles/navix.dir/src/FileScanner.cpp.o: CMakeFiles/navix.dir/flags.make
 CMakeFiles/navix.dir/src/FileScanner.cpp.o: /Users/mac/Project/cpp-assist/src/FileScanner.cpp
 CMakeFiles/navix.dir/src/FileScanner.cpp.o: CMakeFiles/navix.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/mac/Project/cpp-assist/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/navix.dir/src/FileScanner.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/mac/Project/cpp-assist/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/navix.dir/src/FileScanner.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/navix.dir/src/FileScanner.cpp.o -MF CMakeFiles/navix.dir/src/FileScanner.cpp.o.d -o CMakeFiles/navix.dir/src/FileScanner.cpp.o -c /Users/mac/Project/cpp-assist/src/FileScanner.cpp
 
 CMakeFiles/navix.dir/src/FileScanner.cpp.i: cmake_force
@@ -89,7 +103,7 @@ CMakeFiles/navix.dir/src/FileScanner.cpp.s: cmake_force
 CMakeFiles/navix.dir/src/Symbol.cpp.o: CMakeFiles/navix.dir/flags.make
 CMakeFiles/navix.dir/src/Symbol.cpp.o: /Users/mac/Project/cpp-assist/src/Symbol.cpp
 CMakeFiles/navix.dir/src/Symbol.cpp.o: CMakeFiles/navix.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/mac/Project/cpp-assist/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/navix.dir/src/Symbol.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/mac/Project/cpp-assist/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/navix.dir/src/Symbol.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/navix.dir/src/Symbol.cpp.o -MF CMakeFiles/navix.dir/src/Symbol.cpp.o.d -o CMakeFiles/navix.dir/src/Symbol.cpp.o -c /Users/mac/Project/cpp-assist/src/Symbol.cpp
 
 CMakeFiles/navix.dir/src/Symbol.cpp.i: cmake_force
@@ -100,35 +114,37 @@ CMakeFiles/navix.dir/src/Symbol.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/navix.dir/src/Symbol.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/mac/Project/cpp-assist/src/Symbol.cpp -o CMakeFiles/navix.dir/src/Symbol.cpp.s
 
-CMakeFiles/navix.dir/src/main.cpp.o: CMakeFiles/navix.dir/flags.make
-CMakeFiles/navix.dir/src/main.cpp.o: /Users/mac/Project/cpp-assist/src/main.cpp
-CMakeFiles/navix.dir/src/main.cpp.o: CMakeFiles/navix.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/mac/Project/cpp-assist/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/navix.dir/src/main.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/navix.dir/src/main.cpp.o -MF CMakeFiles/navix.dir/src/main.cpp.o.d -o CMakeFiles/navix.dir/src/main.cpp.o -c /Users/mac/Project/cpp-assist/src/main.cpp
+CMakeFiles/navix.dir/src/TUI.cpp.o: CMakeFiles/navix.dir/flags.make
+CMakeFiles/navix.dir/src/TUI.cpp.o: /Users/mac/Project/cpp-assist/src/TUI.cpp
+CMakeFiles/navix.dir/src/TUI.cpp.o: CMakeFiles/navix.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/mac/Project/cpp-assist/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/navix.dir/src/TUI.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/navix.dir/src/TUI.cpp.o -MF CMakeFiles/navix.dir/src/TUI.cpp.o.d -o CMakeFiles/navix.dir/src/TUI.cpp.o -c /Users/mac/Project/cpp-assist/src/TUI.cpp
 
-CMakeFiles/navix.dir/src/main.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/navix.dir/src/main.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/mac/Project/cpp-assist/src/main.cpp > CMakeFiles/navix.dir/src/main.cpp.i
+CMakeFiles/navix.dir/src/TUI.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/navix.dir/src/TUI.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/mac/Project/cpp-assist/src/TUI.cpp > CMakeFiles/navix.dir/src/TUI.cpp.i
 
-CMakeFiles/navix.dir/src/main.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/navix.dir/src/main.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/mac/Project/cpp-assist/src/main.cpp -o CMakeFiles/navix.dir/src/main.cpp.s
+CMakeFiles/navix.dir/src/TUI.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/navix.dir/src/TUI.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/mac/Project/cpp-assist/src/TUI.cpp -o CMakeFiles/navix.dir/src/TUI.cpp.s
 
 # Object files for target navix
 navix_OBJECTS = \
+"CMakeFiles/navix.dir/src/main.cpp.o" \
 "CMakeFiles/navix.dir/src/FileScanner.cpp.o" \
 "CMakeFiles/navix.dir/src/Symbol.cpp.o" \
-"CMakeFiles/navix.dir/src/main.cpp.o"
+"CMakeFiles/navix.dir/src/TUI.cpp.o"
 
 # External object files for target navix
 navix_EXTERNAL_OBJECTS =
 
+navix: CMakeFiles/navix.dir/src/main.cpp.o
 navix: CMakeFiles/navix.dir/src/FileScanner.cpp.o
 navix: CMakeFiles/navix.dir/src/Symbol.cpp.o
-navix: CMakeFiles/navix.dir/src/main.cpp.o
+navix: CMakeFiles/navix.dir/src/TUI.cpp.o
 navix: CMakeFiles/navix.dir/build.make
 navix: CMakeFiles/navix.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/mac/Project/cpp-assist/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX executable navix"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/mac/Project/cpp-assist/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX executable navix"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/navix.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

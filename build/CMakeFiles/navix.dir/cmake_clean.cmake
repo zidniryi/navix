@@ -3,6 +3,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/navix.dir/src/FileScanner.cpp.o.d"
   "CMakeFiles/navix.dir/src/Symbol.cpp.o"
   "CMakeFiles/navix.dir/src/Symbol.cpp.o.d"
+  "CMakeFiles/navix.dir/src/TUI.cpp.o"
+  "CMakeFiles/navix.dir/src/TUI.cpp.o.d"
   "CMakeFiles/navix.dir/src/main.cpp.o"
   "CMakeFiles/navix.dir/src/main.cpp.o.d"
   "navix"
