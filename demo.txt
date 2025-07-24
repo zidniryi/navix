@@ -1,0 +1,70 @@
+# PROJECT DOCUMENTATION
+
+## Installation Guide
+
+This document provides installation instructions for the Navix project.
+
+### Prerequisites
+
+- C++17 compatible compiler
+- CMake 3.10+
+- ncurses library
+
+TODO: Add Windows installation guide
+FIXME: Update minimum CMake version requirement
+NOTE: macOS users need Xcode command line tools
+
+### Download
+
+Visit our website: https://navix.dev
+Contact us: support@navix.dev
+
+For issues: https://github.com/navix/navix/issues
+
+## FEATURES
+
+The following features are supported:
+
+- Multi-language symbol indexing
+- Real-time fuzzy search capabilities
+- Interactive TUI mode with preview
+- Direct editor integration
+
+### Performance Optimization
+
+Important: The tool performs best on SSD drives.
+Warning: Large projects may require additional memory.
+
+1. Use project-specific scanning modes
+2. Enable caching for repeated searches
+3. Configure editor integration properly
+
+## Chapter 1: Getting Started
+
+This chapter covers the basic usage patterns.
+
+### 1.1 Basic Commands
+
+* Scan all files: navix .
+* Interactive mode: navix . --tui
+* Language-specific: navix . --cpp
+
+### 1.2 Advanced Usage
+
+For advanced users, the following options are available:
+- Symbol search with fuzzy matching
+- Export to universal ctags format
+- Integration with popular editors
+
+## Summary
+
+Navix provides powerful code navigation capabilities across multiple programming languages and documentation formats.
+
+Contact Information:
+- Email: admin@navix.dev
+- Website: https://docs.navix.dev
+- Support: https://support.navix.dev/help
+
+FIXME: Add more examples
+TODO: Create video tutorials
+NOTE: Remember to update version numbers 

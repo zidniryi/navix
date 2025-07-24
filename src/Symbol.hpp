@@ -49,6 +49,17 @@ enum class SymbolType {
     GO_PACKAGE,
     GO_IMPORT,
     
+    // Text file symbols
+    TXT_HEADER,
+    TXT_SUBHEADER,
+    TXT_URL,
+    TXT_EMAIL,
+    TXT_TODO,
+    TXT_NOTE,
+    TXT_FIXME,
+    TXT_LINE,
+    TXT_WORD,
+    
     UNKNOWN
 };
 
@@ -83,9 +94,11 @@ private:
     void parseTypeScriptJavaScript(const std::string& line, const std::string& filePath, int lineNumber);
     void parsePython(const std::string& line, const std::string& filePath, int lineNumber);
     void parseGo(const std::string& line, const std::string& filePath, int lineNumber);
+    void parsePlainText(const std::string& line, const std::string& filePath, int lineNumber);
     bool isTypeScriptOrJavaScript(const std::string& filePath) const;
     bool isPython(const std::string& filePath) const;
     bool isGo(const std::string& filePath) const;
+    bool isPlainText(const std::string& filePath) const;
     int levenshteinDistance(const std::string& s1, const std::string& s2) const;
     bool isPrefixMatch(const std::string& symbol, const std::string& query) const;
     
@@ -94,6 +107,12 @@ private:
     bool isClass(const std::string& line, size_t pos) const;
     bool isVariable(const std::string& line, size_t pos) const;
     std::string extractSymbolName(const std::string& line, size_t startPos) const;
+    
+    // Text parsing helpers
+    bool isHeader(const std::string& line) const;
+    bool isSubHeader(const std::string& line) const;
+    bool isSignificantLine(const std::string& line) const;
+    std::string extractUrlOrEmail(const std::string& line, bool isEmail = false) const;
 };
 
 #endif // SYMBOL_HPP 

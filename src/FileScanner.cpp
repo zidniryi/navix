@@ -28,7 +28,9 @@ std::vector<std::string> FileScanner::scanForAllSupportedFiles(const std::string
         // Python files
         ".py", ".pyw", ".pyi",
         // Go files
-        ".go"
+        ".go",
+        // Text files
+        ".txt", ".text", ".md", ".rst", ".log", ".readme", ".doc"
     };
     return scanByExtensions(rootPath, allExtensions);
 }
@@ -46,6 +48,11 @@ std::vector<std::string> FileScanner::scanForPython(const std::string& rootPath)
 std::vector<std::string> FileScanner::scanForGo(const std::string& rootPath) {
     std::vector<std::string> goExtensions = {".go"};
     return scanByExtensions(rootPath, goExtensions);
+}
+
+std::vector<std::string> FileScanner::scanForPlainText(const std::string& rootPath) {
+    std::vector<std::string> textExtensions = {".txt", ".text", ".md", ".rst", ".log", ".readme", ".doc"};
+    return scanByExtensions(rootPath, textExtensions);
 }
 
 std::vector<std::string> FileScanner::scanByExtensions(const std::string& rootPath, const std::vector<std::string>& extensions) {
@@ -288,6 +295,16 @@ void FileScanner::exportTags(const std::string& rootPath, const std::string& out
             case SymbolType::PY_LAMBDA: kind = "l"; break;
             case SymbolType::GO_CONSTANT: kind = "d"; break;
             case SymbolType::GO_PACKAGE: kind = "p"; break;
+            // Text file symbols
+            case SymbolType::TXT_HEADER:
+            case SymbolType::TXT_SUBHEADER: kind = "h"; break;
+            case SymbolType::TXT_URL: kind = "u"; break;
+            case SymbolType::TXT_EMAIL: kind = "e"; break;
+            case SymbolType::TXT_TODO:
+            case SymbolType::TXT_NOTE:
+            case SymbolType::TXT_FIXME: kind = "t"; break;
+            case SymbolType::TXT_LINE: kind = "l"; break;
+            case SymbolType::TXT_WORD: kind = "w"; break;
             default: kind = "x"; break;
         }
         

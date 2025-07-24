@@ -100,6 +100,12 @@ bool SymbolIndex::isGo(const std::string& filePath) const {
     return ext == ".go";
 }
 
+bool SymbolIndex::isPlainText(const std::string& filePath) const {
+    std::string ext = filePath.substr(filePath.find_last_of('.'));
+    return ext == ".txt" || ext == ".text" || ext == ".md" || ext == ".rst" || 
+           ext == ".log" || ext == ".readme" || ext == ".doc";
+}
+
 void SymbolIndex::parseFile(const std::string& filePath) {
     std::ifstream file(filePath);
     if (!file.is_open()) {
@@ -115,15 +121,17 @@ void SymbolIndex::parseFile(const std::string& filePath) {
         trimmed.erase(trimmed.begin(), std::find_if(trimmed.begin(), trimmed.end(),
                       [](unsigned char ch) { return !std::isspace(ch); }));
         
-        // Skip comments and empty lines
-        if (trimmed.empty() || trimmed.substr(0, 2) == "//" || 
-            (trimmed[0] == '#' && !isPython(filePath))) {
+        // Skip comments and empty lines (but not for plain text files)
+        if (!isPlainText(filePath) && (trimmed.empty() || trimmed.substr(0, 2) == "//" || 
+            (trimmed[0] == '#' && !isPython(filePath)))) {
             lineNumber++;
             continue;
         }
         
         // Parse based on file type
-        if (isGo(filePath)) {
+        if (isPlainText(filePath)) {
+            parsePlainText(line, filePath, lineNumber);  // Use original line with whitespace
+        } else if (isGo(filePath)) {
             parseGo(trimmed, filePath, lineNumber);
         } else if (isPython(filePath)) {
             parsePython(trimmed, filePath, lineNumber);
@@ -402,6 +410,156 @@ void SymbolIndex::parseLineForSymbols(const std::string& line, const std::string
     }
 }
 
+void SymbolIndex::parsePlainText(const std::string& line, const std::string& filePath, int lineNumber) {
+    // Skip empty lines
+    if (line.empty() || std::all_of(line.begin(), line.end(), ::isspace)) {
+        return;
+    }
+    
+    std::string trimmed = line;
+    // Remove leading and trailing whitespace
+    trimmed.erase(trimmed.begin(), std::find_if(trimmed.begin(), trimmed.end(),
+                  [](unsigned char ch) { return !std::isspace(ch); }));
+    trimmed.erase(std::find_if(trimmed.rbegin(), trimmed.rend(),
+                  [](unsigned char ch) { return !std::isspace(ch); }).base(), trimmed.end());
+    
+    if (trimmed.empty()) return;
+    
+    // Check for TODO, NOTE, FIXME annotations
+    std::smatch match;
+    std::regex todoRegex(R"((?:TODO|FIXME|NOTE|HACK|BUG|WARNING)[\s:]+(.+))");
+    if (std::regex_search(trimmed, match, todoRegex)) {
+        std::string content = match[1].str();
+        SymbolType type = SymbolType::TXT_TODO;
+        if (trimmed.find("FIXME") != std::string::npos) type = SymbolType::TXT_FIXME;
+        else if (trimmed.find("NOTE") != std::string::npos) type = SymbolType::TXT_NOTE;
+        
+        addSymbol(Symbol(content, type, filePath, lineNumber, trimmed));
+        return;
+    }
+    
+    // Check for URLs
+    std::regex urlRegex(R"(https?://[^\s]+)");
+    if (std::regex_search(trimmed, match, urlRegex)) {
+        std::string url = match[0].str();
+        addSymbol(Symbol(url, SymbolType::TXT_URL, filePath, lineNumber, trimmed));
+    }
+    
+    // Check for email addresses
+    std::regex emailRegex(R"([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})");
+    if (std::regex_search(trimmed, match, emailRegex)) {
+        std::string email = match[0].str();
+        addSymbol(Symbol(email, SymbolType::TXT_EMAIL, filePath, lineNumber, trimmed));
+    }
+    
+    // Check for headers and subheaders
+    if (isHeader(trimmed)) {
+        addSymbol(Symbol(trimmed, SymbolType::TXT_HEADER, filePath, lineNumber, line));
+        return;
+    }
+    
+    if (isSubHeader(trimmed)) {
+        addSymbol(Symbol(trimmed, SymbolType::TXT_SUBHEADER, filePath, lineNumber, line));
+        return;
+    }
+    
+    // Check for significant lines (longer content that might be important)
+    if (isSignificantLine(trimmed)) {
+        // Extract first few words as the symbol name
+        std::istringstream iss(trimmed);
+        std::string firstWords;
+        std::string word;
+        int wordCount = 0;
+        while (iss >> word && wordCount < 5) {
+            if (!firstWords.empty()) firstWords += " ";
+            firstWords += word;
+            wordCount++;
+        }
+        if (trimmed.length() > firstWords.length()) {
+            firstWords += "...";
+        }
+        
+        addSymbol(Symbol(firstWords, SymbolType::TXT_LINE, filePath, lineNumber, trimmed));
+    }
+    
+    // Extract important words (capitalized words, longer words)
+    std::regex wordRegex(R"(\b[A-Z][a-zA-Z]{3,}\b|\b[a-zA-Z]{6,}\b)");
+    std::sregex_iterator wordsBegin(trimmed.begin(), trimmed.end(), wordRegex);
+    std::sregex_iterator wordsEnd;
+    
+    for (std::sregex_iterator i = wordsBegin; i != wordsEnd; ++i) {
+        std::string word = (*i).str();
+        // Filter out common words
+        if (word != "this" && word != "that" && word != "with" && word != "from" && 
+            word != "they" && word != "have" && word != "will" && word != "been" &&
+            word != "were" && word != "said" && word != "each" && word != "which" &&
+            word != "their" && word != "time" && word != "would" && word != "there") {
+            addSymbol(Symbol(word, SymbolType::TXT_WORD, filePath, lineNumber, trimmed));
+        }
+    }
+}
+
+// Text parsing helper methods
+bool SymbolIndex::isHeader(const std::string& line) const {
+    // Check for common header patterns
+    if (line.length() < 3) return false;
+    
+    // All caps line (at least 3 chars)
+    if (std::all_of(line.begin(), line.end(), [](char c) { 
+        return std::isupper(c) || std::isspace(c) || std::ispunct(c); 
+    }) && std::any_of(line.begin(), line.end(), ::isalpha)) {
+        return true;
+    }
+    
+    // Line followed by === or --- (we can't check next line here, but we can check if it ends with these)
+    if (line.find("===") != std::string::npos || line.find("---") != std::string::npos) {
+        return true;
+    }
+    
+    // Markdown style headers
+    if (line[0] == '#') {
+        return true;
+    }
+    
+    // Chapter/Section patterns
+    std::regex headerRegex(R"(^(?:Chapter|Section|Part|Book)\s+\d+|^\d+\.\s+[A-Z])");
+    return std::regex_search(line, headerRegex);
+}
+
+bool SymbolIndex::isSubHeader(const std::string& line) const {
+    if (line.length() < 3) return false;
+    
+    // Numbered sections like "1.1 Introduction" or "A.1 Overview"
+    std::regex subHeaderRegex(R"(^\d+\.\d+\s+\w+|^[A-Z]\.\d+\s+\w+)");
+    if (std::regex_search(line, subHeaderRegex)) {
+        return true;
+    }
+    
+    // Lines that start with common subheader words
+    std::regex subHeaderWords(R"(^(?:Introduction|Overview|Summary|Conclusion|Background|Method|Results|Discussion|Abstract)[\s:]?)");
+    return std::regex_search(line, subHeaderWords);
+}
+
+bool SymbolIndex::isSignificantLine(const std::string& line) const {
+    // Lines that are likely to be important content
+    if (line.length() < 10 || line.length() > 200) return false;
+    
+    // Lines ending with punctuation (sentences)
+    if (line.back() == '.' || line.back() == '!' || line.back() == '?') {
+        return true;
+    }
+    
+    // Lines that start with bullet points or numbers
+    std::regex listRegex(R"(^[\s]*(?:\*|\-|\+|\d+\.)\s+.+)");
+    if (std::regex_search(line, listRegex)) {
+        return true;
+    }
+    
+    // Lines that contain important keywords
+    std::regex importantRegex(R"(\b(?:important|note|warning|error|success|failure|critical|urgent|required|mandatory|optional)\b)");
+    return std::regex_search(line, importantRegex);
+}
+
 int SymbolIndex::levenshteinDistance(const std::string& s1, const std::string& s2) const {
     const size_t len1 = s1.size(), len2 = s2.size();
     std::vector<std::vector<int>> d(len1 + 1, std::vector<int>(len2 + 1));
@@ -473,6 +631,17 @@ std::string SymbolIndex::symbolTypeToString(SymbolType type) const {
         case SymbolType::GO_CONSTANT: return "go-constant";
         case SymbolType::GO_PACKAGE: return "go-package";
         case SymbolType::GO_IMPORT: return "go-import";
+        
+        // Text file symbols
+        case SymbolType::TXT_HEADER: return "header";
+        case SymbolType::TXT_SUBHEADER: return "subheader";
+        case SymbolType::TXT_URL: return "url";
+        case SymbolType::TXT_EMAIL: return "email";
+        case SymbolType::TXT_TODO: return "todo";
+        case SymbolType::TXT_NOTE: return "note";
+        case SymbolType::TXT_FIXME: return "fixme";
+        case SymbolType::TXT_LINE: return "line";
+        case SymbolType::TXT_WORD: return "word";
         
         case SymbolType::UNKNOWN: return "unknown";
         default: return "unknown";

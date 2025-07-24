@@ -24,6 +24,7 @@ void printUsage(const char* programName) {
     std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --ts") << "  Scan TypeScript/JS files    │\n";
     std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --py") << "  Scan Python files only      │\n";
     std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --go") << "  Scan Go files only          │\n";
+    std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --txt") << "  Scan text files only        │\n";
     std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --search <symbol>") << "  Smart symbol search         │\n";
     std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --goto <symbol>") << "  Navigate to symbol          │\n";
     std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --export-tags") << "  Export ctags file           │\n";
@@ -36,17 +37,19 @@ void printUsage(const char* programName) {
     std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --ts") << "           TypeScript/JS      │\n";
     std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --py") << "           Python files      │\n";
     std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --go") << "           Go files          │\n";
-    std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --search App") << "       Find App symbols     │\n";
-    std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --goto main") << "        Jump to function    │\n";
+    std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --txt") << "          Text/Doc files     │\n";
+    std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --search README") << "      Find documentation   │\n";
+    std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --search TODO") << "        Find TODO items     │\n";
     std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --export-tags") << "    Generate tags       │\n";
     std::cout << "└────────────────────────────────────────────────────────────────────────────┘\n\n";
     
     std::cout << "┌─ FEATURES ─────────────────────────────────────────────────────────────────┐\n";
-    std::cout << "│ ⚡ Multi-language support (C++,TS,JS,PY,Go) 🎯 Intelligent fuzzy search   │\n";
-    std::cout << "│ 🚀 Direct editor navigation               📋 Universal ctags export      │\n";
-    std::cout << "│ 🛠️  Auto-detect editors (vim, vscode)     🎨 Beautiful, readable output  │\n";
-    std::cout << "│ 🖥️  Interactive TUI with arrow keys       ⌨️  Real-time file preview     │\n";
-    std::cout << "│ ⚡ Animated loading indicators             🔍 Smart progress tracking     │\n";
+    std::cout << "│ ⚡ Multi-language support (C++,TS,JS,PY,Go,TXT) 🎯 Intelligent fuzzy search │\n";
+    std::cout << "│ 🚀 Direct editor navigation                   📋 Universal ctags export    │\n";
+    std::cout << "│ 🛠️  Auto-detect editors (vim, vscode)         🎨 Beautiful, readable output│\n";
+    std::cout << "│ 🖥️  Interactive TUI with arrow keys           ⌨️  Real-time file preview   │\n";
+    std::cout << "│ ⚡ Animated loading indicators                 🔍 Smart progress tracking   │\n";
+    std::cout << "│ 📄 Text content indexing (headers, URLs, TODOs) 🔗 Email & link extraction │\n";
     std::cout << "└────────────────────────────────────────────────────────────────────────────┘\n\n";
     
     std::cout << "┌─ SUPPORTED FILES ──────────────────────────────────────────────────────────┐\n";
@@ -54,6 +57,13 @@ void printUsage(const char* programName) {
     std::cout << "│ TypeScript/JavaScript: .ts • .tsx • .js • .jsx • .mjs • .cjs              │\n";
     std::cout << "│ Python: .py • .pyw • .pyi                                                  │\n";
     std::cout << "│ Go: .go                                                                     │\n";
+    std::cout << "│ Text: .txt • .md • .rst • .log • .readme • .doc                            │\n";
+    std::cout << "└────────────────────────────────────────────────────────────────────────────┘\n\n";
+    
+    std::cout << "┌─ TEXT FILE FEATURES ───────────────────────────────────────────────────────┐\n";
+    std::cout << "│ 📑 Headers & Subheaders    🔗 URLs & Email addresses                       │\n";
+    std::cout << "│ 📝 TODO/FIXME/NOTE items   📄 Significant lines & content                  │\n";
+    std::cout << "│ 🔍 Important word extraction  📋 Documentation indexing                    │\n";
     std::cout << "└────────────────────────────────────────────────────────────────────────────┘\n\n";
     
     std::cout << "┌─ TUI CONTROLS ─────────────────────────────────────────────────────────────┐\n";
@@ -201,6 +211,21 @@ int main(int argc, char* argv[]) {
             
             FileScanner::printWithSpinner("Discovering Go files");
             files = FileScanner::scanForGo(rootPath);
+            FileScanner::clearLine();
+            
+            std::cout << "\n┌─ FILES ────────────────────────────────────────────────────────────────────┐\n";
+            std::cout << "│ 🎉 Found " << files.size() << " matching files:\n";
+            for (const auto& file : files) {
+                std::cout << "│ 📄 " << file << "\n";
+            }
+            std::cout << "└────────────────────────────────────────────────────────────────────────────┘\n\n";
+            
+        } else if (mode == "--txt") {
+            // Scan text files only
+            std::cout << "🔍 Scanning for text files in: " << rootPath << "\n";
+            
+            FileScanner::printWithSpinner("Discovering text files");
+            files = FileScanner::scanForPlainText(rootPath);
             FileScanner::clearLine();
             
             std::cout << "\n┌─ FILES ────────────────────────────────────────────────────────────────────┐\n";
