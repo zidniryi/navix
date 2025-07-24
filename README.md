@@ -8,11 +8,12 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-Support-blue.svg)](https://www.typescriptlang.org/)
 [![JavaScript](https://img.shields.io/badge/JavaScript-Support-yellow.svg)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
 [![Python](https://img.shields.io/badge/Python-Support-blue.svg)](https://python.org/)
+[![Go](https://img.shields.io/badge/Go-Support-cyan.svg)](https://golang.org/)
 [![ncurses](https://img.shields.io/badge/TUI-ncurses-green.svg)](https://invisible-island.net/ncurses/)
 
 > 🎯 **Find. Navigate. Index.**
 > 
-> A powerful, cross-platform code navigation and indexing tool that supports C++, TypeScript, JavaScript, and Python. Built for developers who value speed and simplicity. Features both CLI and interactive TUI modes.
+> A powerful, cross-platform code navigation and indexing tool that supports C++, TypeScript, JavaScript, Python, and Go. Built for developers who value speed and simplicity. Features both CLI and interactive TUI modes.
 
 ## ✨ Features
 
@@ -21,6 +22,7 @@
 - **TypeScript**: `.ts`, `.tsx`
 - **JavaScript**: `.js`, `.jsx`, `.mjs`, `.cjs`
 - **Python**: `.py`, `.pyw`, `.pyi`
+- **Go**: `.go`
 
 ### ⚡ **Lightning-Fast Symbol Indexing**
 - Intelligent fuzzy search with ranking
@@ -53,6 +55,12 @@
 - Variables, Decorators
 - Imports (from & import)
 - Lambda functions
+
+**Go Symbols:**
+- Functions, Methods (with receivers)
+- Structs, Interfaces, Types
+- Variables, Constants
+- Packages, Imports
 
 ### 🚀 **Direct Editor Integration**
 - **Supported Editors**: vim, nvim, VS Code, emacs, nano, Sublime Text, Atom
@@ -146,6 +154,7 @@ navix <project_root> --tui
 navix <project_root> --cpp              # C++ files only
 navix <project_root> --ts               # TypeScript/JavaScript files
 navix <project_root> --py               # Python files only
+navix <project_root> --go               # Go files only
 
 # Symbol search
 navix <project_root> --search <symbol>  # Smart fuzzy search
@@ -164,10 +173,10 @@ navix <project_root> --export-tags my.tags  # Custom filename
 
 ```bash
 # Filter by extensions
-navix . --ext .cpp .hpp .ts .py
+navix . --ext .cpp .hpp .ts .py .go
 
 # Find specific files
-navix . --name main.cpp package.json app.py
+navix . --name main.cpp package.json app.py main.go
 
 # Pattern matching
 navix . --pattern test
@@ -257,6 +266,7 @@ navix . --search-exact AppComponent
 # 📍 AppComponent(js-class) in App.tsx:15
 # 📍 App(js-function) in main.ts:8
 # 📍 main(py-function) in app.py:23
+# 📍 Handler(go-struct) in server.go:45
 ```
 
 ### Navigate to Code
@@ -268,7 +278,7 @@ navix . --goto main
 navix . --goto AppComponent code
 
 # Open in vim
-navix . --goto process_data vim
+navix . --goto ProcessData vim
 ```
 
 ### IDE Integration
@@ -296,6 +306,10 @@ navix . --ts
 # Python projects
 navix . --py
 # Found symbols: functions, classes, decorators...
+
+# Go projects
+navix . --go
+# Found symbols: functions, structs, interfaces...
 
 # Mixed codebases
 navix .
@@ -366,7 +380,7 @@ Files: 5/247 | Search: App    [FILES] │       </header>                 │
 ### Symbol Search Results
 ```
 ┌─ RESULTS ──────────────────────────────────────────────────────────────────┐
-│ Found 7 symbol(s):
+│ Found 9 symbol(s):
 │ 📍 AppComponent(js-class) in App.tsx:15
 │ 📍 App(js-function) in main.ts:8  
 │ 📍 AppRouter(js-class) in router.ts:23
@@ -374,19 +388,23 @@ Files: 5/247 | Search: App    [FILES] │       </header>                 │
 │ 📍 Application(class) in main.cpp:12
 │ 📍 app_init(py-function) in app.py:45
 │ 📍 AppHandler(py-class) in handlers.py:8
+│ 📍 AppServer(go-struct) in server.go:23
+│ 📍 AppConfig(go-type) in config.go:12
 └────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ### File Scanning
 ```
 ┌─ FILES ────────────────────────────────────────────────────────────────────┐
-│ Found 1247 matching files:
+│ Found 1547 matching files:
 │ 📄 src/components/App.tsx
 │ 📄 src/utils/helpers.ts
 │ 📄 src/main.cpp
 │ 📄 include/parser.hpp
 │ 📄 scripts/deploy.py
 │ 📄 tests/test_api.py
+│ 📄 cmd/server/main.go
+│ 📄 pkg/handlers/auth.go
 │ ...
 └────────────────────────────────────────────────────────────────────────────┘
 ```
@@ -406,6 +424,11 @@ Files: 5/247 | Search: App    [FILES] │       </header>                 │
 | | `py-variable`, `py-decorator` | Variables & decorators |
 | | `py-import`, `py-from-import` | Module imports |
 | | `py-lambda` | Lambda functions |
+| **Go** | `go-function`, `go-method` | Functions & methods |
+| | `go-struct`, `go-interface` | Data structures |
+| | `go-type`, `go-variable` | Type definitions & variables |
+| | `go-constant`, `go-package` | Constants & packages |
+| | `go-import` | Module imports |
 
 ## 💡 Tips & Best Practices
 

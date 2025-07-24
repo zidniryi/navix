@@ -38,6 +38,17 @@ enum class SymbolType {
     PY_DECORATOR,
     PY_LAMBDA,
     
+    // Go symbols
+    GO_FUNCTION,
+    GO_METHOD,
+    GO_STRUCT,
+    GO_INTERFACE,
+    GO_TYPE,
+    GO_VARIABLE,
+    GO_CONSTANT,
+    GO_PACKAGE,
+    GO_IMPORT,
+    
     UNKNOWN
 };
 
@@ -71,8 +82,10 @@ private:
     void parseLineForSymbols(const std::string& line, const std::string& filePath, int lineNumber);
     void parseTypeScriptJavaScript(const std::string& line, const std::string& filePath, int lineNumber);
     void parsePython(const std::string& line, const std::string& filePath, int lineNumber);
+    void parseGo(const std::string& line, const std::string& filePath, int lineNumber);
     bool isTypeScriptOrJavaScript(const std::string& filePath) const;
     bool isPython(const std::string& filePath) const;
+    bool isGo(const std::string& filePath) const;
     int levenshteinDistance(const std::string& s1, const std::string& s2) const;
     bool isPrefixMatch(const std::string& symbol, const std::string& query) const;
     

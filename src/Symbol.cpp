@@ -95,6 +95,11 @@ bool SymbolIndex::isPython(const std::string& filePath) const {
     return ext == ".py" || ext == ".pyw" || ext == ".pyi";
 }
 
+bool SymbolIndex::isGo(const std::string& filePath) const {
+    std::string ext = filePath.substr(filePath.find_last_of('.'));
+    return ext == ".go";
+}
+
 void SymbolIndex::parseFile(const std::string& filePath) {
     std::ifstream file(filePath);
     if (!file.is_open()) {
@@ -118,7 +123,9 @@ void SymbolIndex::parseFile(const std::string& filePath) {
         }
         
         // Parse based on file type
-        if (isPython(filePath)) {
+        if (isGo(filePath)) {
+            parseGo(trimmed, filePath, lineNumber);
+        } else if (isPython(filePath)) {
             parsePython(trimmed, filePath, lineNumber);
         } else if (isTypeScriptOrJavaScript(filePath)) {
             parseTypeScriptJavaScript(trimmed, filePath, lineNumber);
@@ -126,6 +133,81 @@ void SymbolIndex::parseFile(const std::string& filePath) {
             parseLineForSymbols(trimmed, filePath, lineNumber);
         }
         lineNumber++;
+    }
+}
+
+void SymbolIndex::parseGo(const std::string& line, const std::string& filePath, int lineNumber) {
+    std::smatch match;
+    
+    // Function definitions: func functionName( or func (receiver) functionName(
+    std::regex functionRegex(R"(\bfunc\s+(?:\([^)]+\)\s+)?(\w+)\s*\()");
+    if (std::regex_search(line, match, functionRegex)) {
+        std::string name = match[1].str();
+        // Check if it's a method (has receiver)
+        SymbolType type = line.find("func (") == 0 ? SymbolType::GO_METHOD : SymbolType::GO_FUNCTION;
+        addSymbol(Symbol(name, type, filePath, lineNumber, line));
+    }
+    
+    // Struct definitions: type StructName struct
+    std::regex structRegex(R"(\btype\s+(\w+)\s+struct\b)");
+    if (std::regex_search(line, match, structRegex)) {
+        std::string name = match[1].str();
+        addSymbol(Symbol(name, SymbolType::GO_STRUCT, filePath, lineNumber, line));
+    }
+    
+    // Interface definitions: type InterfaceName interface
+    std::regex interfaceRegex(R"(\btype\s+(\w+)\s+interface\b)");
+    if (std::regex_search(line, match, interfaceRegex)) {
+        std::string name = match[1].str();
+        addSymbol(Symbol(name, SymbolType::GO_INTERFACE, filePath, lineNumber, line));
+    }
+    
+    // Type definitions: type TypeName = or type TypeName SomeType
+    std::regex typeRegex(R"(\btype\s+(\w+)\s+(?!=\s*struct\b|interface\b)(\w+|\[|\*))");
+    if (std::regex_search(line, match, typeRegex)) {
+        std::string name = match[1].str();
+        addSymbol(Symbol(name, SymbolType::GO_TYPE, filePath, lineNumber, line));
+    }
+    
+    // Variable declarations: var varName type or var varName = value
+    std::regex varRegex(R"(\bvar\s+(\w+)\s+)");
+    if (std::regex_search(line, match, varRegex)) {
+        std::string name = match[1].str();
+        addSymbol(Symbol(name, SymbolType::GO_VARIABLE, filePath, lineNumber, line));
+    }
+    
+    // Constant declarations: const constName = value or const constName type = value
+    std::regex constRegex(R"(\bconst\s+(\w+)\s+)");
+    if (std::regex_search(line, match, constRegex)) {
+        std::string name = match[1].str();
+        addSymbol(Symbol(name, SymbolType::GO_CONSTANT, filePath, lineNumber, line));
+    }
+    
+    // Package declaration: package packageName
+    std::regex packageRegex(R"(\bpackage\s+(\w+))");
+    if (std::regex_search(line, match, packageRegex)) {
+        std::string name = match[1].str();
+        addSymbol(Symbol(name, SymbolType::GO_PACKAGE, filePath, lineNumber, line));
+    }
+    
+    // Import statements: import "package" or import alias "package"
+    std::regex importRegex(R"(\bimport\s+(?:(\w+)\s+)?\"([^\"]+)\")");
+    if (std::regex_search(line, match, importRegex)) {
+        std::string name = match[1].str().empty() ? match[2].str() : match[1].str();
+        if (!name.empty()) {
+            addSymbol(Symbol(name, SymbolType::GO_IMPORT, filePath, lineNumber, line));
+        }
+    }
+    
+    // Short variable declarations: varName := value
+    std::regex shortVarRegex(R"(^\s*(\w+)\s*:=)");
+    if (std::regex_search(line, match, shortVarRegex)) {
+        std::string name = match[1].str();
+        // Filter out common keywords
+        if (name != "if" && name != "for" && name != "switch" && name != "select" && 
+            name != "range" && name != "go" && name != "defer") {
+            addSymbol(Symbol(name, SymbolType::GO_VARIABLE, filePath, lineNumber, line));
+        }
     }
 }
 
@@ -380,6 +462,17 @@ std::string SymbolIndex::symbolTypeToString(SymbolType type) const {
         case SymbolType::PY_FROM_IMPORT: return "py-from-import";
         case SymbolType::PY_DECORATOR: return "py-decorator";
         case SymbolType::PY_LAMBDA: return "py-lambda";
+        
+        // Go symbols
+        case SymbolType::GO_FUNCTION: return "go-function";
+        case SymbolType::GO_METHOD: return "go-method";
+        case SymbolType::GO_STRUCT: return "go-struct";
+        case SymbolType::GO_INTERFACE: return "go-interface";
+        case SymbolType::GO_TYPE: return "go-type";
+        case SymbolType::GO_VARIABLE: return "go-variable";
+        case SymbolType::GO_CONSTANT: return "go-constant";
+        case SymbolType::GO_PACKAGE: return "go-package";
+        case SymbolType::GO_IMPORT: return "go-import";
         
         case SymbolType::UNKNOWN: return "unknown";
         default: return "unknown";
