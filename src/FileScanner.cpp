@@ -16,6 +16,21 @@ std::vector<std::string> FileScanner::scanForCppFiles(const std::string& rootPat
     return scanByExtensions(rootPath, defaultExtensions);
 }
 
+std::vector<std::string> FileScanner::scanForAllSupportedFiles(const std::string& rootPath) {
+    std::vector<std::string> allExtensions = {
+        // C++ files
+        ".cpp", ".hpp", ".h", ".cc", ".cxx",
+        // TypeScript/JavaScript files
+        ".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs"
+    };
+    return scanByExtensions(rootPath, allExtensions);
+}
+
+std::vector<std::string> FileScanner::scanForTypeScriptJavaScript(const std::string& rootPath) {
+    std::vector<std::string> tsJsExtensions = {".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs"};
+    return scanByExtensions(rootPath, tsJsExtensions);
+}
+
 std::vector<std::string> FileScanner::scanByExtensions(const std::string& rootPath, const std::vector<std::string>& extensions) {
     std::vector<std::string> files;
 
@@ -80,11 +95,11 @@ SymbolIndex FileScanner::buildSymbolIndex(const std::vector<std::string>& files)
 }
 
 std::vector<Symbol> FileScanner::searchSymbols(const std::string& rootPath, const std::string& query, bool fuzzy) {
-    // Get all C++ files in the directory
-    std::vector<std::string> cppFiles = scanForCppFiles(rootPath);
+    // Get all supported files in the directory (C++, TypeScript, JavaScript)
+    std::vector<std::string> allFiles = scanForAllSupportedFiles(rootPath);
     
     // Build symbol index
-    SymbolIndex index = buildSymbolIndex(cppFiles);
+    SymbolIndex index = buildSymbolIndex(allFiles);
     
     // Search for symbols
     return index.search(query, fuzzy);
@@ -113,11 +128,11 @@ bool FileScanner::gotoSymbol(const std::string& rootPath, const std::string& sym
 }
 
 void FileScanner::exportTags(const std::string& rootPath, const std::string& outputFile) {
-    // Get all C++ files
-    std::vector<std::string> cppFiles = scanForCppFiles(rootPath);
+    // Get all supported files
+    std::vector<std::string> allFiles = scanForAllSupportedFiles(rootPath);
     
     // Build symbol index
-    SymbolIndex index = buildSymbolIndex(cppFiles);
+    SymbolIndex index = buildSymbolIndex(allFiles);
     
     // Open output file
     std::ofstream tagsFile(outputFile);
@@ -129,8 +144,8 @@ void FileScanner::exportTags(const std::string& rootPath, const std::string& out
     // Write ctags header
     tagsFile << "!_TAG_FILE_FORMAT\t2\t/extended format; --format=1 will not append ;\" to lines/\n";
     tagsFile << "!_TAG_FILE_SORTED\t1\t/0=unsorted, 1=sorted, 2=foldcase/\n";
-    tagsFile << "!_TAG_PROGRAM_AUTHOR\tCpp-Assist\t/cpp-assist@github.com/\n";
-    tagsFile << "!_TAG_PROGRAM_NAME\tcpp-assist\t//\n";
+    tagsFile << "!_TAG_PROGRAM_AUTHOR\tNavix\t/navix@github.com/\n";
+    tagsFile << "!_TAG_PROGRAM_NAME\tnavix\t//\n";
     tagsFile << "!_TAG_PROGRAM_VERSION\t1.0\t//\n";
     
     // Collect all symbols and sort them
@@ -139,7 +154,7 @@ void FileScanner::exportTags(const std::string& rootPath, const std::string& out
     // We need to manually collect symbols since SymbolIndex doesn't expose them
     // Let's rebuild and extract
     SymbolIndex tempIndex;
-    tempIndex.buildIndex(cppFiles);
+    tempIndex.buildIndex(allFiles);
     
     // Search for common patterns to get symbols (this is a workaround)
     std::vector<std::string> commonPatterns = {
@@ -173,14 +188,24 @@ void FileScanner::exportTags(const std::string& rootPath, const std::string& out
         // Format: symbol\tfile\t/^pattern$/;\"\tkind
         std::string kind;
         switch (symbol.type) {
-            case SymbolType::FUNCTION: kind = "f"; break;
-            case SymbolType::CLASS: kind = "c"; break;
+            case SymbolType::FUNCTION: 
+            case SymbolType::JS_FUNCTION: 
+            case SymbolType::JS_ARROW_FUNCTION: kind = "f"; break;
+            case SymbolType::CLASS: 
+            case SymbolType::JS_CLASS: kind = "c"; break;
             case SymbolType::STRUCT: kind = "s"; break;
-            case SymbolType::VARIABLE: kind = "v"; break;
+            case SymbolType::VARIABLE: 
+            case SymbolType::JS_CONST: 
+            case SymbolType::JS_LET: 
+            case SymbolType::JS_VAR: kind = "v"; break;
             case SymbolType::ENUM: kind = "e"; break;
-            case SymbolType::TYPEDEF: kind = "t"; break;
+            case SymbolType::TYPEDEF: 
+            case SymbolType::JS_TYPE: kind = "t"; break;
             case SymbolType::MACRO: kind = "d"; break;
             case SymbolType::NAMESPACE: kind = "n"; break;
+            case SymbolType::JS_INTERFACE: kind = "i"; break;
+            case SymbolType::JS_IMPORT: 
+            case SymbolType::JS_EXPORT: kind = "m"; break;
             default: kind = "x"; break;
         }
         

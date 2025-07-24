@@ -5,6 +5,7 @@
 #include <vector>
 
 enum class SymbolType {
+    // C++ symbols
     FUNCTION,
     CLASS,
     STRUCT,
@@ -13,6 +14,20 @@ enum class SymbolType {
     TYPEDEF,
     MACRO,
     NAMESPACE,
+    
+    // TypeScript/JavaScript symbols
+    JS_FUNCTION,
+    JS_ARROW_FUNCTION,
+    JS_CLASS,
+    JS_INTERFACE,
+    JS_TYPE,
+    JS_CONST,
+    JS_LET,
+    JS_VAR,
+    JS_IMPORT,
+    JS_EXPORT,
+    JS_MODULE,
+    
     UNKNOWN
 };
 
@@ -44,6 +59,8 @@ public:
 private:
     void parseFile(const std::string& filePath);
     void parseLineForSymbols(const std::string& line, const std::string& filePath, int lineNumber);
+    void parseTypeScriptJavaScript(const std::string& line, const std::string& filePath, int lineNumber);
+    bool isTypeScriptOrJavaScript(const std::string& filePath) const;
     int levenshteinDistance(const std::string& s1, const std::string& s2) const;
     bool isPrefixMatch(const std::string& symbol, const std::string& query) const;
     

@@ -84,6 +84,12 @@ size_t SymbolIndex::size() const {
     return symbols.size();
 }
 
+bool SymbolIndex::isTypeScriptOrJavaScript(const std::string& filePath) const {
+    std::string ext = filePath.substr(filePath.find_last_of('.'));
+    return ext == ".ts" || ext == ".tsx" || ext == ".js" || ext == ".jsx" || 
+           ext == ".mjs" || ext == ".cjs" || ext == ".d.ts";
+}
+
 void SymbolIndex::parseFile(const std::string& filePath) {
     std::ifstream file(filePath);
     if (!file.is_open()) {
@@ -105,9 +111,89 @@ void SymbolIndex::parseFile(const std::string& filePath) {
             continue;
         }
         
-        // Parse different symbol types
-        parseLineForSymbols(trimmed, filePath, lineNumber);
+        // Parse based on file type
+        if (isTypeScriptOrJavaScript(filePath)) {
+            parseTypeScriptJavaScript(trimmed, filePath, lineNumber);
+        } else {
+            parseLineForSymbols(trimmed, filePath, lineNumber);
+        }
         lineNumber++;
+    }
+}
+
+void SymbolIndex::parseTypeScriptJavaScript(const std::string& line, const std::string& filePath, int lineNumber) {
+    std::smatch match;
+    
+    // Function declarations: function name() or async function name()
+    std::regex functionRegex(R"(\b(?:async\s+)?function\s+(\w+)\s*\()");
+    if (std::regex_search(line, match, functionRegex)) {
+        std::string name = match[1].str();
+        addSymbol(Symbol(name, SymbolType::JS_FUNCTION, filePath, lineNumber, line));
+    }
+    
+    // Arrow functions: const name = () => or const name = async () =>
+    std::regex arrowFunctionRegex(R"(\b(?:const|let|var)\s+(\w+)\s*=\s*(?:async\s+)?\([^)]*\)\s*=>)");
+    if (std::regex_search(line, match, arrowFunctionRegex)) {
+        std::string name = match[1].str();
+        addSymbol(Symbol(name, SymbolType::JS_ARROW_FUNCTION, filePath, lineNumber, line));
+    }
+    
+    // Class declarations: class ClassName
+    std::regex classRegex(R"(\bclass\s+(\w+))");
+    if (std::regex_search(line, match, classRegex)) {
+        std::string name = match[1].str();
+        addSymbol(Symbol(name, SymbolType::JS_CLASS, filePath, lineNumber, line));
+    }
+    
+    // Interface declarations: interface InterfaceName
+    std::regex interfaceRegex(R"(\binterface\s+(\w+))");
+    if (std::regex_search(line, match, interfaceRegex)) {
+        std::string name = match[1].str();
+        addSymbol(Symbol(name, SymbolType::JS_INTERFACE, filePath, lineNumber, line));
+    }
+    
+    // Type declarations: type TypeName =
+    std::regex typeRegex(R"(\btype\s+(\w+)\s*=)");
+    if (std::regex_search(line, match, typeRegex)) {
+        std::string name = match[1].str();
+        addSymbol(Symbol(name, SymbolType::JS_TYPE, filePath, lineNumber, line));
+    }
+    
+    // Const declarations: const varName
+    std::regex constRegex(R"(\bconst\s+(\w+)\s*[=:])");
+    if (std::regex_search(line, match, constRegex)) {
+        std::string name = match[1].str();
+        addSymbol(Symbol(name, SymbolType::JS_CONST, filePath, lineNumber, line));
+    }
+    
+    // Let declarations: let varName
+    std::regex letRegex(R"(\blet\s+(\w+)\s*[=:])");
+    if (std::regex_search(line, match, letRegex)) {
+        std::string name = match[1].str();
+        addSymbol(Symbol(name, SymbolType::JS_LET, filePath, lineNumber, line));
+    }
+    
+    // Var declarations: var varName
+    std::regex varRegex(R"(\bvar\s+(\w+)\s*[=:])");
+    if (std::regex_search(line, match, varRegex)) {
+        std::string name = match[1].str();
+        addSymbol(Symbol(name, SymbolType::JS_VAR, filePath, lineNumber, line));
+    }
+    
+    // Import statements: import { name } from or import name from
+    std::regex importRegex(R"(\bimport\s+(?:\{[^}]*(\w+)[^}]*\}|(\w+))\s+from)");
+    if (std::regex_search(line, match, importRegex)) {
+        std::string name = match[1].str().empty() ? match[2].str() : match[1].str();
+        if (!name.empty()) {
+            addSymbol(Symbol(name, SymbolType::JS_IMPORT, filePath, lineNumber, line));
+        }
+    }
+    
+    // Export statements: export const name or export function name
+    std::regex exportRegex(R"(\bexport\s+(?:const|let|var|function|class|interface|type)\s+(\w+))");
+    if (std::regex_search(line, match, exportRegex)) {
+        std::string name = match[1].str();
+        addSymbol(Symbol(name, SymbolType::JS_EXPORT, filePath, lineNumber, line));
     }
 }
 
@@ -197,6 +283,7 @@ bool SymbolIndex::isPrefixMatch(const std::string& symbol, const std::string& qu
 
 std::string SymbolIndex::symbolTypeToString(SymbolType type) const {
     switch (type) {
+        // C++ symbols
         case SymbolType::FUNCTION: return "function";
         case SymbolType::CLASS: return "class";
         case SymbolType::STRUCT: return "struct";
@@ -205,6 +292,20 @@ std::string SymbolIndex::symbolTypeToString(SymbolType type) const {
         case SymbolType::TYPEDEF: return "typedef";
         case SymbolType::MACRO: return "macro";
         case SymbolType::NAMESPACE: return "namespace";
+        
+        // TypeScript/JavaScript symbols
+        case SymbolType::JS_FUNCTION: return "js-function";
+        case SymbolType::JS_ARROW_FUNCTION: return "arrow-func";
+        case SymbolType::JS_CLASS: return "js-class";
+        case SymbolType::JS_INTERFACE: return "interface";
+        case SymbolType::JS_TYPE: return "type";
+        case SymbolType::JS_CONST: return "const";
+        case SymbolType::JS_LET: return "let";
+        case SymbolType::JS_VAR: return "var";
+        case SymbolType::JS_IMPORT: return "import";
+        case SymbolType::JS_EXPORT: return "export";
+        case SymbolType::JS_MODULE: return "module";
+        
         case SymbolType::UNKNOWN: return "unknown";
         default: return "unknown";
     }

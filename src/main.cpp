@@ -17,25 +17,32 @@ void printUsage(const char* programName) {
     std::cout << "🎯 Find. Navigate. Code.\n\n";
     
     std::cout << "┌─ USAGE ────────────────────────────────────────────────────────────────────┐\n";
-    std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <project_root>") << "  Scan for C++ files       │\n";
-    std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --ext <exts>") << "  Filter by extensions     │\n";
-    std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --search <symbol>") << "  Smart symbol search      │\n";
-    std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --goto <symbol>") << "  Navigate to symbol       │\n";
-    std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --export-tags") << "  Export ctags file        │\n";
+    std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <project_root>") << "  Scan all supported files    │\n";
+    std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --cpp") << "  Scan C++ files only         │\n";
+    std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --ts") << "  Scan TypeScript/JS files    │\n";
+    std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --search <symbol>") << "  Smart symbol search         │\n";
+    std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --goto <symbol>") << "  Navigate to symbol          │\n";
+    std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --export-tags") << "  Export ctags file           │\n";
     std::cout << "└────────────────────────────────────────────────────────────────────────────┘\n\n";
     
     std::cout << "┌─ EXAMPLES ─────────────────────────────────────────────────────────────────┐\n";
-    std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " .") << "     Quick scan          │\n";
-    std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --search FileScanner") << " Find symbols       │\n";
-    std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --goto main") << "          Jump to function   │\n";
-    std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --goto main vim") << "      Open in vim        │\n";
-    std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --export-tags") << "      Generate tags      │\n";
+    std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " .") << "     Scan all files      │\n";
+    std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --cpp") << "          C++ files only     │\n";
+    std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --ts") << "           TypeScript/JS      │\n";
+    std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --search App") << "       Find App symbols     │\n";
+    std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --goto main") << "        Jump to function    │\n";
+    std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --export-tags") << "    Generate tags       │\n";
     std::cout << "└────────────────────────────────────────────────────────────────────────────┘\n\n";
     
     std::cout << "┌─ FEATURES ─────────────────────────────────────────────────────────────────┐\n";
-    std::cout << "│ ⚡ Lightning-fast symbol indexing     🎯 Intelligent fuzzy search         │\n";
-    std::cout << "│ 🚀 Direct editor navigation          📋 ctags export for IDE integration  │\n";
-    std::cout << "│ 🛠️  Auto-detect editors (vim, vscode) 🎨 Beautiful, readable output       │\n";
+    std::cout << "│ ⚡ Multi-language support (C++, TS, JS)  🎯 Intelligent fuzzy search      │\n";
+    std::cout << "│ 🚀 Direct editor navigation             📋 Universal ctags export        │\n";
+    std::cout << "│ 🛠️  Auto-detect editors (vim, vscode)   🎨 Beautiful, readable output    │\n";
+    std::cout << "└────────────────────────────────────────────────────────────────────────────┘\n\n";
+    
+    std::cout << "┌─ SUPPORTED FILES ──────────────────────────────────────────────────────────┐\n";
+    std::cout << "│ C++: .cpp • .hpp • .h • .cc • .cxx                                         │\n";
+    std::cout << "│ TypeScript/JavaScript: .ts • .tsx • .js • .jsx • .mjs • .cjs              │\n";
     std::cout << "└────────────────────────────────────────────────────────────────────────────┘\n\n";
     
     std::cout << "┌─ EDITORS ──────────────────────────────────────────────────────────────────┐\n";
@@ -91,12 +98,12 @@ int main(int argc, char* argv[]) {
 
     std::string rootPath = argv[1];
     std::vector<std::string> files;
-    std::string scanType = "cpp"; // default
+    std::string scanType = "all"; // default
 
     if (argc == 2) {
-        // Default: scan for C++ files
-        files = FileScanner::scanForCppFiles(rootPath);
-        std::cout << "🔍 Scanning for C++ files in: " << rootPath << "\n";
+        // Default: scan for all supported files
+        files = FileScanner::scanForAllSupportedFiles(rootPath);
+        std::cout << "🔍 Scanning for all supported files in: " << rootPath << "\n";
         std::cout << "\n┌─ FILES ────────────────────────────────────────────────────────────────────┐\n";
         std::cout << "│ Found " << files.size() << " matching files:\n";
         for (const auto& file : files) {
@@ -106,7 +113,31 @@ int main(int argc, char* argv[]) {
     } else if (argc >= 3) {
         std::string mode = argv[2];
         
-        if (mode == "--ext" && argc >= 4) {
+        if (mode == "--cpp") {
+            // Scan C++ files only
+            files = FileScanner::scanForCppFiles(rootPath);
+            std::cout << "🔍 Scanning for C++ files in: " << rootPath << "\n";
+            
+            std::cout << "\n┌─ FILES ────────────────────────────────────────────────────────────────────┐\n";
+            std::cout << "│ Found " << files.size() << " matching files:\n";
+            for (const auto& file : files) {
+                std::cout << "│ 📄 " << file << "\n";
+            }
+            std::cout << "└────────────────────────────────────────────────────────────────────────────┘\n\n";
+            
+        } else if (mode == "--ts") {
+            // Scan TypeScript/JavaScript files only
+            files = FileScanner::scanForTypeScriptJavaScript(rootPath);
+            std::cout << "🔍 Scanning for TypeScript/JavaScript files in: " << rootPath << "\n";
+            
+            std::cout << "\n┌─ FILES ────────────────────────────────────────────────────────────────────┐\n";
+            std::cout << "│ Found " << files.size() << " matching files:\n";
+            for (const auto& file : files) {
+                std::cout << "│ 📄 " << file << "\n";
+            }
+            std::cout << "└────────────────────────────────────────────────────────────────────────────┘\n\n";
+            
+        } else if (mode == "--ext" && argc >= 4) {
             // Scan by extensions
             std::vector<std::string> extensions;
             for (int i = 3; i < argc; i++) {
