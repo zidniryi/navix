@@ -10,7 +10,7 @@
 [![Python](https://img.shields.io/badge/Python-Support-blue.svg)](https://python.org/)
 [![ncurses](https://img.shields.io/badge/TUI-ncurses-green.svg)](https://invisible-island.net/ncurses/)
 
-> 🎯 **Find. Navigate. Code.**
+> 🎯 **Find. Navigate. Index.**
 > 
 > A powerful, cross-platform code navigation and indexing tool that supports C++, TypeScript, JavaScript, and Python. Built for developers who value speed and simplicity. Features both CLI and interactive TUI modes.
 
