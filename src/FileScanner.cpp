@@ -8,6 +8,9 @@
 #include <cstdlib>
 #include <cstring>
 #include <set>
+#include <iomanip>
+#include <thread>
+#include <atomic>
 
 namespace fs = std::filesystem;
 
@@ -95,18 +98,58 @@ std::vector<std::string> FileScanner::scanByPattern(const std::string& rootPath,
     return files;
 }
 
-SymbolIndex FileScanner::buildSymbolIndex(const std::vector<std::string>& files) {
+SymbolIndex FileScanner::buildSymbolIndex(const std::vector<std::string>& files, bool showProgressFlag) {
     SymbolIndex index;
+    
+    if (showProgressFlag && !files.empty()) {
+        std::cout << "🔨 Building symbol index...\n";
+        
+        for (size_t i = 0; i < files.size(); i++) {
+            showProgress("Indexing", i + 1, files.size());
+            
+            // Create a temporary index for this file
+            SymbolIndex tempIndex;
+            tempIndex.buildIndex({files[i]});
+            
+            // Small delay to show progress (remove in production if too slow)
+            if (files.size() < 100) {
+                std::this_thread::sleep_for(std::chrono::milliseconds(5));
+            }
+        }
+        
+        clearLine();
+        std::cout << "✅ Symbol index built successfully! (" << files.size() << " files processed)\n";
+    }
+    
     index.buildIndex(files);
     return index;
 }
 
-std::vector<Symbol> FileScanner::searchSymbols(const std::string& rootPath, const std::string& query, bool fuzzy) {
+std::vector<Symbol> FileScanner::searchSymbols(const std::string& rootPath, const std::string& query, bool fuzzy, bool showProgressFlag) {
+    if (showProgressFlag) {
+        // Show loading animation
+        printWithSpinner("🔍 Scanning files");
+    }
+    
     // Get all supported files in the directory (C++, TypeScript, JavaScript, Python)
     std::vector<std::string> allFiles = scanForAllSupportedFiles(rootPath);
     
-    // Build symbol index
-    SymbolIndex index = buildSymbolIndex(allFiles);
+    if (showProgressFlag) {
+        clearLine();
+        std::cout << "📁 Found " << allFiles.size() << " files\n";
+        
+        printWithSpinner("🔍 Building symbol index");
+    }
+    
+    // Build symbol index with progress
+    SymbolIndex index = buildSymbolIndex(allFiles, false); // Don't show double progress
+    
+    if (showProgressFlag) {
+        clearLine();
+        printWithSpinner("🔍 Searching for '" + query + "'");
+        std::this_thread::sleep_for(std::chrono::milliseconds(200)); // Brief pause for effect
+        clearLine();
+    }
     
     // Search for symbols
     return index.search(query, fuzzy);
@@ -120,7 +163,7 @@ bool FileScanner::gotoSymbol(const std::string& rootPath, const std::string& sym
         // Try fuzzy search if exact fails
         symbols = searchSymbols(rootPath, symbolName, true);
         if (symbols.empty()) {
-            std::cout << "Symbol '" << symbolName << "' not found.\n";
+            std::cout << "❌ Symbol '" << symbolName << "' not found.\n";
             return false;
         }
     }
@@ -128,23 +171,32 @@ bool FileScanner::gotoSymbol(const std::string& rootPath, const std::string& sym
     // Use the first match (best match)
     const Symbol& symbol = symbols[0];
     
-    std::cout << "Found: " << formatSymbolLocation(symbol) << "\n";
+    std::cout << "✅ Found: " << formatSymbolLocation(symbol) << "\n";
     
     // Open in editor
     return openInEditor(symbol.file, symbol.line, editor);
 }
 
 void FileScanner::exportTags(const std::string& rootPath, const std::string& outputFile) {
+    // Show progress
+    printWithSpinner("🔍 Scanning all supported files");
+    
     // Get all supported files
     std::vector<std::string> allFiles = scanForAllSupportedFiles(rootPath);
     
+    clearLine();
+    std::cout << "📁 Found " << allFiles.size() << " files\n";
+    
     // Build symbol index
-    SymbolIndex index = buildSymbolIndex(allFiles);
+    SymbolIndex index = buildSymbolIndex(allFiles, true);
+    
+    printWithSpinner("📋 Generating ctags file");
     
     // Open output file
     std::ofstream tagsFile(outputFile);
     if (!tagsFile.is_open()) {
-        std::cerr << "Error: Could not create tags file: " << outputFile << "\n";
+        clearLine();
+        std::cerr << "❌ Error: Could not create tags file: " << outputFile << "\n";
         return;
     }
     
@@ -234,15 +286,17 @@ void FileScanner::exportTags(const std::string& rootPath, const std::string& out
     }
     
     tagsFile.close();
-    std::cout << "Exported " << allSymbols.size() << " symbols to " << outputFile << "\n";
+    
+    clearLine();
+    std::cout << "✅ Exported " << allSymbols.size() << " symbols to " << outputFile << "\n";
 }
 
 bool FileScanner::openInEditor(const std::string& filePath, int line, const std::string& editor) {
     std::string editorCmd = editor.empty() ? detectEditor() : editor;
     
     if (editorCmd.empty()) {
-        std::cout << "No editor found. Please specify an editor or set EDITOR environment variable.\n";
-        std::cout << "File: " << filePath << " at line " << line << "\n";
+        std::cout << "❌ No editor found. Please specify an editor or set EDITOR environment variable.\n";
+        std::cout << "📄 File: " << filePath << " at line " << line << "\n";
         return false;
     }
     
@@ -266,7 +320,7 @@ bool FileScanner::openInEditor(const std::string& filePath, int line, const std:
         command = editorCmd + " \"" + filePath + "\"";
     }
     
-    std::cout << "Opening with: " << command << "\n";
+    std::cout << "🚀 Opening with: " << command << "\n";
     
     // Execute the command
     int result = std::system(command.c_str());
@@ -319,4 +373,65 @@ std::string FileScanner::formatSymbolLocation(const Symbol& symbol) {
     }
     
     return symbol.name + "(" + typeStr + ") in " + filename + ":" + std::to_string(symbol.line);
+}
+
+// Loading and animation functions
+void FileScanner::showLoadingSpinner(const std::string& message, std::chrono::milliseconds duration) {
+    std::atomic<bool> running(true);
+    std::thread spinnerThread(spinnerAnimation, message, std::ref(running));
+    
+    std::this_thread::sleep_for(duration);
+    running = false;
+    
+    if (spinnerThread.joinable()) {
+        spinnerThread.join();
+    }
+    
+    clearLine();
+}
+
+void FileScanner::spinnerAnimation(const std::string& message, std::atomic<bool>& running) {
+    int frame = 0;
+    while (running) {
+        std::cout << "\r" << getSpinnerFrame(frame) << " " << message << std::flush;
+        frame = (frame + 1) % 10;
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
+}
+
+std::string FileScanner::getSpinnerFrame(int frame) {
+    const std::vector<std::string> frames = {
+        "⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"
+    };
+    return frames[frame % frames.size()];
+}
+
+void FileScanner::showProgress(const std::string& operation, int current, int total) {
+    const int barWidth = 30;
+    float progress = static_cast<float>(current) / total;
+    int pos = static_cast<int>(barWidth * progress);
+    
+    std::cout << "\r" << operation << " [";
+    for (int i = 0; i < barWidth; i++) {
+        if (i < pos) std::cout << "█";
+        else if (i == pos) std::cout << ">";
+        else std::cout << " ";
+    }
+    std::cout << "] " << std::setw(3) << static_cast<int>(progress * 100) << "% (" 
+              << current << "/" << total << ")" << std::flush;
+    
+    if (current == total) {
+        std::cout << "\n";
+    }
+}
+
+void FileScanner::clearLine() {
+    std::cout << "\r\033[K";
+}
+
+void FileScanner::printWithSpinner(const std::string& message) {
+    static int frame = 0;
+    std::cout << "\r" << getSpinnerFrame(frame) << " " << message << std::flush;
+    frame = (frame + 1) % 10;
+    std::this_thread::sleep_for(std::chrono::milliseconds(150));
 }

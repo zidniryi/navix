@@ -44,6 +44,7 @@ void printUsage(const char* programName) {
     std::cout << "│ 🚀 Direct editor navigation             📋 Universal ctags export        │\n";
     std::cout << "│ 🛠️  Auto-detect editors (vim, vscode)   🎨 Beautiful, readable output    │\n";
     std::cout << "│ 🖥️  Interactive TUI with arrow keys     ⌨️  Real-time file preview       │\n";
+    std::cout << "│ ⚡ Animated loading indicators           🔍 Smart progress tracking       │\n";
     std::cout << "└────────────────────────────────────────────────────────────────────────────┘\n\n";
     
     std::cout << "┌─ SUPPORTED FILES ──────────────────────────────────────────────────────────┐\n";
@@ -74,7 +75,7 @@ void printSymbolResults(const std::vector<Symbol>& symbols, const SymbolIndex& i
     
     if (useNewFormat) {
         std::cout << "\n┌─ RESULTS ──────────────────────────────────────────────────────────────────┐\n";
-        std::cout << "│ Found " << symbols.size() << " symbol(s):\n";
+        std::cout << "│ 🎉 Found " << symbols.size() << " symbol(s):\n";
         for (const auto& symbol : symbols) {
             std::cout << "│ 📍 " << FileScanner::formatSymbolLocation(symbol) << "\n";
         }
@@ -115,10 +116,15 @@ int main(int argc, char* argv[]) {
 
     if (argc == 2) {
         // Default: scan for all supported files
-        files = FileScanner::scanForAllSupportedFiles(rootPath);
         std::cout << "🔍 Scanning for all supported files in: " << rootPath << "\n";
+        
+        // Show loading spinner while scanning
+        FileScanner::printWithSpinner("Discovering files");
+        files = FileScanner::scanForAllSupportedFiles(rootPath);
+        FileScanner::clearLine();
+        
         std::cout << "\n┌─ FILES ────────────────────────────────────────────────────────────────────┐\n";
-        std::cout << "│ Found " << files.size() << " matching files:\n";
+        std::cout << "│ 🎉 Found " << files.size() << " matching files:\n";
         for (const auto& file : files) {
             std::cout << "│ 📄 " << file << "\n";
         }
@@ -129,6 +135,8 @@ int main(int argc, char* argv[]) {
         if (mode == "--tui") {
             // Launch TUI mode
             std::cout << "🚀 Launching Interactive TUI mode...\n";
+            FileScanner::showLoadingSpinner("Initializing TUI", std::chrono::milliseconds(800));
+            
             try {
                 TUI tui;
                 tui.run(rootPath);
@@ -141,11 +149,14 @@ int main(int argc, char* argv[]) {
             
         } else if (mode == "--cpp") {
             // Scan C++ files only
-            files = FileScanner::scanForCppFiles(rootPath);
             std::cout << "🔍 Scanning for C++ files in: " << rootPath << "\n";
             
+            FileScanner::printWithSpinner("Discovering C++ files");
+            files = FileScanner::scanForCppFiles(rootPath);
+            FileScanner::clearLine();
+            
             std::cout << "\n┌─ FILES ────────────────────────────────────────────────────────────────────┐\n";
-            std::cout << "│ Found " << files.size() << " matching files:\n";
+            std::cout << "│ 🎉 Found " << files.size() << " matching files:\n";
             for (const auto& file : files) {
                 std::cout << "│ 📄 " << file << "\n";
             }
@@ -153,11 +164,14 @@ int main(int argc, char* argv[]) {
             
         } else if (mode == "--ts") {
             // Scan TypeScript/JavaScript files only
-            files = FileScanner::scanForTypeScriptJavaScript(rootPath);
             std::cout << "🔍 Scanning for TypeScript/JavaScript files in: " << rootPath << "\n";
             
+            FileScanner::printWithSpinner("Discovering TS/JS files");
+            files = FileScanner::scanForTypeScriptJavaScript(rootPath);
+            FileScanner::clearLine();
+            
             std::cout << "\n┌─ FILES ────────────────────────────────────────────────────────────────────┐\n";
-            std::cout << "│ Found " << files.size() << " matching files:\n";
+            std::cout << "│ 🎉 Found " << files.size() << " matching files:\n";
             for (const auto& file : files) {
                 std::cout << "│ 📄 " << file << "\n";
             }
@@ -165,11 +179,14 @@ int main(int argc, char* argv[]) {
             
         } else if (mode == "--py") {
             // Scan Python files only
-            files = FileScanner::scanForPython(rootPath);
             std::cout << "🔍 Scanning for Python files in: " << rootPath << "\n";
             
+            FileScanner::printWithSpinner("Discovering Python files");
+            files = FileScanner::scanForPython(rootPath);
+            FileScanner::clearLine();
+            
             std::cout << "\n┌─ FILES ────────────────────────────────────────────────────────────────────┐\n";
-            std::cout << "│ Found " << files.size() << " matching files:\n";
+            std::cout << "│ 🎉 Found " << files.size() << " matching files:\n";
             for (const auto& file : files) {
                 std::cout << "│ 📄 " << file << "\n";
             }
@@ -185,15 +202,19 @@ int main(int argc, char* argv[]) {
                 }
                 extensions.push_back(ext);
             }
-            files = FileScanner::scanByExtensions(rootPath, extensions);
+            
             std::cout << "🔍 Scanning for files with extensions: ";
             for (const auto& ext : extensions) {
                 std::cout << ext << " ";
             }
             std::cout << "in: " << rootPath << "\n";
             
+            FileScanner::printWithSpinner("Discovering files");
+            files = FileScanner::scanByExtensions(rootPath, extensions);
+            FileScanner::clearLine();
+            
             std::cout << "\n┌─ FILES ────────────────────────────────────────────────────────────────────┐\n";
-            std::cout << "│ Found " << files.size() << " matching files:\n";
+            std::cout << "│ 🎉 Found " << files.size() << " matching files:\n";
             for (const auto& file : files) {
                 std::cout << "│ 📄 " << file << "\n";
             }
@@ -205,15 +226,19 @@ int main(int argc, char* argv[]) {
             for (int i = 3; i < argc; i++) {
                 filenames.push_back(argv[i]);
             }
-            files = FileScanner::scanByFilenames(rootPath, filenames);
+            
             std::cout << "🔍 Scanning for files named: ";
             for (const auto& name : filenames) {
                 std::cout << name << " ";
             }
             std::cout << "in: " << rootPath << "\n";
             
+            FileScanner::printWithSpinner("Discovering files");
+            files = FileScanner::scanByFilenames(rootPath, filenames);
+            FileScanner::clearLine();
+            
             std::cout << "\n┌─ FILES ────────────────────────────────────────────────────────────────────┐\n";
-            std::cout << "│ Found " << files.size() << " matching files:\n";
+            std::cout << "│ 🎉 Found " << files.size() << " matching files:\n";
             for (const auto& file : files) {
                 std::cout << "│ 📄 " << file << "\n";
             }
@@ -222,50 +247,53 @@ int main(int argc, char* argv[]) {
         } else if (mode == "--pattern" && argc >= 4) {
             // Scan by pattern
             std::string pattern = argv[3];
-            files = FileScanner::scanByPattern(rootPath, pattern);
             std::cout << "🔍 Scanning for files containing pattern '" << pattern << "' in: " << rootPath << "\n";
             
+            FileScanner::printWithSpinner("Discovering files");
+            files = FileScanner::scanByPattern(rootPath, pattern);
+            FileScanner::clearLine();
+            
             std::cout << "\n┌─ FILES ────────────────────────────────────────────────────────────────────┐\n";
-            std::cout << "│ Found " << files.size() << " matching files:\n";
+            std::cout << "│ 🎉 Found " << files.size() << " matching files:\n";
             for (const auto& file : files) {
                 std::cout << "│ 📄 " << file << "\n";
             }
             std::cout << "└────────────────────────────────────────────────────────────────────────────┘\n\n";
             
         } else if (mode == "--search" && argc >= 4) {
-            // Symbol search (fuzzy)
+            // Symbol search (fuzzy) with loading animation
             std::string query = argv[3];
-            std::cout << "🔍 Searching for symbols matching '" << query << "' in: " << rootPath << "\n";
+            std::cout << "🔍 Searching for symbols matching '" << query << "' in: " << rootPath << "\n\n";
             
-            std::vector<Symbol> symbols = FileScanner::searchSymbols(rootPath, query, true);
+            std::vector<Symbol> symbols = FileScanner::searchSymbols(rootPath, query, true, true);
             SymbolIndex tempIndex; // For the symbolTypeToString method
             printSymbolResults(symbols, tempIndex, true); // Use new format
             
         } else if (mode == "--search-exact" && argc >= 4) {
-            // Symbol search (exact)
+            // Symbol search (exact) with loading animation
             std::string query = argv[3];
-            std::cout << "🎯 Searching for exact symbol '" << query << "' in: " << rootPath << "\n";
+            std::cout << "🎯 Searching for exact symbol '" << query << "' in: " << rootPath << "\n\n";
             
-            std::vector<Symbol> symbols = FileScanner::searchSymbols(rootPath, query, false);
+            std::vector<Symbol> symbols = FileScanner::searchSymbols(rootPath, query, false, true);
             SymbolIndex tempIndex; // For the symbolTypeToString method
             printSymbolResults(symbols, tempIndex, true); // Use new format
             
         } else if (mode == "--goto" && argc >= 4) {
-            // Navigate to symbol
+            // Navigate to symbol with loading animation
             std::string symbolName = argv[3];
             std::string editor = argc >= 5 ? argv[4] : "";
             
-            std::cout << "🚀 Looking for symbol '" << symbolName << "' in: " << rootPath << "\n";
+            std::cout << "🚀 Looking for symbol '" << symbolName << "' in: " << rootPath << "\n\n";
             
             if (!FileScanner::gotoSymbol(rootPath, symbolName, editor)) {
                 return 1;
             }
             
         } else if (mode == "--export-tags") {
-            // Export ctags
+            // Export ctags with loading animation
             std::string outputFile = argc >= 4 ? argv[3] : "tags.txt";
             
-            std::cout << "📋 Exporting tags from " << rootPath << " to " << outputFile << "\n";
+            std::cout << "📋 Exporting tags from " << rootPath << " to " << outputFile << "\n\n";
             FileScanner::exportTags(rootPath, outputFile);
             
         } else {
