@@ -63,11 +63,11 @@ CMAKE_BINARY_DIR = /Users/mac/Project/cpp-assist/build
 # Directory level rules for the build root directory
 
 # The main recursive "all" target.
-all: CMakeFiles/cpp-assist.dir/all
+all: CMakeFiles/navix.dir/all
 .PHONY : all
 
 # The main recursive "codegen" target.
-codegen: CMakeFiles/cpp-assist.dir/codegen
+codegen: CMakeFiles/navix.dir/codegen
 .PHONY : codegen
 
 # The main recursive "preinstall" target.
@@ -75,40 +75,40 @@ preinstall:
 .PHONY : preinstall
 
 # The main recursive "clean" target.
-clean: CMakeFiles/cpp-assist.dir/clean
+clean: CMakeFiles/navix.dir/clean
 .PHONY : clean
 
 #=============================================================================
-# Target rules for target CMakeFiles/cpp-assist.dir
+# Target rules for target CMakeFiles/navix.dir
 
 # All Build rule for target.
-CMakeFiles/cpp-assist.dir/all:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cpp-assist.dir/build.make CMakeFiles/cpp-assist.dir/depend
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cpp-assist.dir/build.make CMakeFiles/cpp-assist.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/mac/Project/cpp-assist/build/CMakeFiles --progress-num=1,2,3,4 "Built target cpp-assist"
-.PHONY : CMakeFiles/cpp-assist.dir/all
+CMakeFiles/navix.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/navix.dir/build.make CMakeFiles/navix.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/navix.dir/build.make CMakeFiles/navix.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/mac/Project/cpp-assist/build/CMakeFiles --progress-num=1,2,3,4 "Built target navix"
+.PHONY : CMakeFiles/navix.dir/all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/cpp-assist.dir/rule: cmake_check_build_system
+CMakeFiles/navix.dir/rule: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/mac/Project/cpp-assist/build/CMakeFiles 4
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/cpp-assist.dir/all
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/navix.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/mac/Project/cpp-assist/build/CMakeFiles 0
-.PHONY : CMakeFiles/cpp-assist.dir/rule
+.PHONY : CMakeFiles/navix.dir/rule
 
 # Convenience name for target.
-cpp-assist: CMakeFiles/cpp-assist.dir/rule
-.PHONY : cpp-assist
+navix: CMakeFiles/navix.dir/rule
+.PHONY : navix
 
 # codegen rule for target.
-CMakeFiles/cpp-assist.dir/codegen:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cpp-assist.dir/build.make CMakeFiles/cpp-assist.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/mac/Project/cpp-assist/build/CMakeFiles --progress-num=1,2,3,4 "Finished codegen for target cpp-assist"
-.PHONY : CMakeFiles/cpp-assist.dir/codegen
+CMakeFiles/navix.dir/codegen:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/navix.dir/build.make CMakeFiles/navix.dir/codegen
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/mac/Project/cpp-assist/build/CMakeFiles --progress-num=1,2,3,4 "Finished codegen for target navix"
+.PHONY : CMakeFiles/navix.dir/codegen
 
 # clean rule for target.
-CMakeFiles/cpp-assist.dir/clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cpp-assist.dir/build.make CMakeFiles/cpp-assist.dir/clean
-.PHONY : CMakeFiles/cpp-assist.dir/clean
+CMakeFiles/navix.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/navix.dir/build.make CMakeFiles/navix.dir/clean
+.PHONY : CMakeFiles/navix.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

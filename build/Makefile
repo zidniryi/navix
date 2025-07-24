@@ -117,24 +117,24 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named cpp-assist
+# Target rules for targets named navix
 
 # Build rule for target.
-cpp-assist: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 cpp-assist
-.PHONY : cpp-assist
+navix: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 navix
+.PHONY : navix
 
 # fast build rule for target.
-cpp-assist/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cpp-assist.dir/build.make CMakeFiles/cpp-assist.dir/build
-.PHONY : cpp-assist/fast
+navix/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/navix.dir/build.make CMakeFiles/navix.dir/build
+.PHONY : navix/fast
 
 src/FileScanner.o: src/FileScanner.cpp.o
 .PHONY : src/FileScanner.o
 
 # target to build an object file
 src/FileScanner.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cpp-assist.dir/build.make CMakeFiles/cpp-assist.dir/src/FileScanner.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/navix.dir/build.make CMakeFiles/navix.dir/src/FileScanner.cpp.o
 .PHONY : src/FileScanner.cpp.o
 
 src/FileScanner.i: src/FileScanner.cpp.i
@@ -142,7 +142,7 @@ src/FileScanner.i: src/FileScanner.cpp.i
 
 # target to preprocess a source file
 src/FileScanner.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cpp-assist.dir/build.make CMakeFiles/cpp-assist.dir/src/FileScanner.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/navix.dir/build.make CMakeFiles/navix.dir/src/FileScanner.cpp.i
 .PHONY : src/FileScanner.cpp.i
 
 src/FileScanner.s: src/FileScanner.cpp.s
@@ -150,7 +150,7 @@ src/FileScanner.s: src/FileScanner.cpp.s
 
 # target to generate assembly for a file
 src/FileScanner.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cpp-assist.dir/build.make CMakeFiles/cpp-assist.dir/src/FileScanner.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/navix.dir/build.make CMakeFiles/navix.dir/src/FileScanner.cpp.s
 .PHONY : src/FileScanner.cpp.s
 
 src/Symbol.o: src/Symbol.cpp.o
@@ -158,7 +158,7 @@ src/Symbol.o: src/Symbol.cpp.o
 
 # target to build an object file
 src/Symbol.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cpp-assist.dir/build.make CMakeFiles/cpp-assist.dir/src/Symbol.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/navix.dir/build.make CMakeFiles/navix.dir/src/Symbol.cpp.o
 .PHONY : src/Symbol.cpp.o
 
 src/Symbol.i: src/Symbol.cpp.i
@@ -166,7 +166,7 @@ src/Symbol.i: src/Symbol.cpp.i
 
 # target to preprocess a source file
 src/Symbol.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cpp-assist.dir/build.make CMakeFiles/cpp-assist.dir/src/Symbol.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/navix.dir/build.make CMakeFiles/navix.dir/src/Symbol.cpp.i
 .PHONY : src/Symbol.cpp.i
 
 src/Symbol.s: src/Symbol.cpp.s
@@ -174,7 +174,7 @@ src/Symbol.s: src/Symbol.cpp.s
 
 # target to generate assembly for a file
 src/Symbol.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cpp-assist.dir/build.make CMakeFiles/cpp-assist.dir/src/Symbol.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/navix.dir/build.make CMakeFiles/navix.dir/src/Symbol.cpp.s
 .PHONY : src/Symbol.cpp.s
 
 src/main.o: src/main.cpp.o
@@ -182,7 +182,7 @@ src/main.o: src/main.cpp.o
 
 # target to build an object file
 src/main.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cpp-assist.dir/build.make CMakeFiles/cpp-assist.dir/src/main.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/navix.dir/build.make CMakeFiles/navix.dir/src/main.cpp.o
 .PHONY : src/main.cpp.o
 
 src/main.i: src/main.cpp.i
@@ -190,7 +190,7 @@ src/main.i: src/main.cpp.i
 
 # target to preprocess a source file
 src/main.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cpp-assist.dir/build.make CMakeFiles/cpp-assist.dir/src/main.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/navix.dir/build.make CMakeFiles/navix.dir/src/main.cpp.i
 .PHONY : src/main.cpp.i
 
 src/main.s: src/main.cpp.s
@@ -198,7 +198,7 @@ src/main.s: src/main.cpp.s
 
 # target to generate assembly for a file
 src/main.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cpp-assist.dir/build.make CMakeFiles/cpp-assist.dir/src/main.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/navix.dir/build.make CMakeFiles/navix.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
 
 # Help Target
@@ -209,7 +209,7 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... cpp-assist"
+	@echo "... navix"
 	@echo "... src/FileScanner.o"
 	@echo "... src/FileScanner.i"
 	@echo "... src/FileScanner.s"

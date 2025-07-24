@@ -146,7 +146,7 @@ CMAKE_PROJECT_DESCRIPTION:STATIC=
 CMAKE_PROJECT_HOMEPAGE_URL:STATIC=
 
 //Value Computed by CMake
-CMAKE_PROJECT_NAME:STATIC=cpp_assist
+CMAKE_PROJECT_NAME:STATIC=navix
 
 //Path to a program.
 CMAKE_RANLIB:FILEPATH=/usr/bin/ranlib
@@ -221,6 +221,15 @@ cpp_assist_IS_TOP_LEVEL:STATIC=ON
 
 //Value Computed by CMake
 cpp_assist_SOURCE_DIR:STATIC=/Users/mac/Project/cpp-assist
+
+//Value Computed by CMake
+navix_BINARY_DIR:STATIC=/Users/mac/Project/cpp-assist/build
+
+//Value Computed by CMake
+navix_IS_TOP_LEVEL:STATIC=ON
+
+//Value Computed by CMake
+navix_SOURCE_DIR:STATIC=/Users/mac/Project/cpp-assist
 
 
 ########################
