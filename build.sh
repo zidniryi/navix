@@ -253,7 +253,7 @@ Configuration directory (if applicable)
 .SH AUTHOR
 Navix development team
 .SH BUGS
-Report bugs at: https://github.com/your-repo/navix/issues
+Report bugs at: https://github.com/zidniryi/navix/issues
 EOF
 }
 

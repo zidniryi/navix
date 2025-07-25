@@ -1,0 +1,7 @@
+Package: navix
+Version: 1.0.0
+Section: utils
+Priority: optional
+Architecture: amd64
+Maintainer: Zidni Ridwan <your@email.com>
+Description: Navix - A TUI navigation app built with ncurses.

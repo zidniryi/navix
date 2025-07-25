@@ -16,6 +16,7 @@
 #include "JsonExporter.hpp"
 #include "LSPServer.hpp"
 
+
 // Version information
 #define NAVIX_VERSION "0.1"
 #define NAVIX_BUILD_DATE __DATE__

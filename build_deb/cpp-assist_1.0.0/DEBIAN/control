@@ -1,0 +1,8 @@
+Package: cpp-assist
+Version: 1.0.0
+Section: utils
+Priority: optional
+Architecture: amd64
+Maintainer: Your Name <youremail@example.com>
+Description: C++ Assist Tool
+ A tool for C++ code assistance.
