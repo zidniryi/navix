@@ -8,6 +8,8 @@
 #include "FileWatcher.hpp"
 #include "PerformanceLogger.hpp"
 #include "AutocompleteEngine.hpp"
+#include "JsonExporter.hpp"
+#include "LSPServer.hpp"
 
 // Version information
 #define NAVIX_VERSION "0.1"
@@ -65,6 +67,11 @@ void printUsage(const char* programName) {
     std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --search <symbol>") << "  Smart symbol search         │\n";
     std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --goto <symbol>") << "  Navigate to symbol          │\n";
     std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --export-tags") << "  Export ctags file           │\n";
+    std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --json [file]") << "  Export symbols to JSON      │\n";
+    std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --lsp") << "  Start LSP server mode       │\n";
+    std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --json-compact") << "  Export compact JSON         │\n";
+    std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --json-stats") << "  Export JSON with stats      │\n";
+    std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --json-lsp") << "  Export LSP-compatible JSON  │\n";
     std::cout << "└────────────────────────────────────────────────────────────────────────────┘\n\n";
     
     std::cout << "┌─ EXAMPLES ─────────────────────────────────────────────────────────────────┐\n";
@@ -86,6 +93,10 @@ void printUsage(const char* programName) {
     std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --search README") << "      Find documentation   │\n";
     std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --search TODO") << "        Find TODO items     │\n";
     std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --export-tags") << "    Generate tags       │\n";
+    std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --json symbols.json") << " Export to JSON      │\n";
+    std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --lsp") << "               Start LSP server    │\n";
+    std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --json-compact") << "     Compact JSON export │\n";
+    std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --json-lsp") << "        LSP-compatible JSON │\n";
     std::cout << "└────────────────────────────────────────────────────────────────────────────┘\n\n";
     
     std::cout << "┌─ FEATURES ─────────────────────────────────────────────────────────────────┐\n";
@@ -97,6 +108,9 @@ void printUsage(const char* programName) {
     std::cout << "│ 📄 Text content indexing (headers, URLs, TODOs) 🔗 Email & link extraction │\n";
     std::cout << "│ 🔄 Live file watching & auto-reindexing       📊 Performance metrics       │\n";
     std::cout << "│ 🔍 Offline autocomplete with prefix & fuzzy   🎯 Multi-algorithm matching  │\n";
+    std::cout << "│ 📤 JSON export for external tools             🔗 LSP bridge compatibility   │\n";
+    std::cout << "│ 🛠️  Language Server Protocol support          🎯 IDE/Editor integration     │\n";
+    std::cout << "│ 📊 Multiple JSON formats (compact, detailed, cool)  ⚡ Developer tool ecosystem   │\n";
     std::cout << "└────────────────────────────────────────────────────────────────────────────┘\n\n";
     
     std::cout << "┌─ SUPPORTED FILES ──────────────────────────────────────────────────────────┐\n";
@@ -128,6 +142,19 @@ void printUsage(const char* programName) {
     std::cout << "│ 📝 Interactive completion mode   🏆 Smart scoring & ranking                │\n";
     std::cout << "│ 🌳 Trie-based efficient indexing  💡 Context-aware suggestions            │\n";
     std::cout << "│ 📊 Configurable weights & boosts  🎨 Beautiful formatted results          │\n";
+    std::cout << "└────────────────────────────────────────────────────────────────────────────┘\n\n";
+    
+    std::cout << "┌─ DEV TOOL INTEGRATIONS ────────────────────────────────────────────────────┐\n";
+    std::cout << "│ 📤 JSON Export: Multiple formats for external tool integration            │\n";
+    std::cout << "│   • Standard: Full symbol data with metadata and statistics              │\n";
+    std::cout << "│   • Compact: Minimized JSON for bandwidth-sensitive applications        │\n";
+    std::cout << "│   • LSP: Language Server Protocol compatible format                      │\n";
+    std::cout << "│   • Stats: Includes project statistics and language breakdowns           │\n";
+    std::cout << "│ 🛠️  LSP Server: Full Language Server Protocol implementation              │\n";
+    std::cout << "│   • Document symbols, workspace symbols, definition lookup              │\n";
+    std::cout << "│   • Real-time symbol updates, hover information                         │\n";
+    std::cout << "│   • Compatible with VS Code, Vim, Emacs, and other LSP clients          │\n";
+    std::cout << "│ 🔗 IDE Integration: Seamless editor and IDE connectivity                  │\n";
     std::cout << "└────────────────────────────────────────────────────────────────────────────┘\n\n";
     
     std::cout << "┌─ TUI CONTROLS ─────────────────────────────────────────────────────────────┐\n";
@@ -639,6 +666,149 @@ int main(int argc, char* argv[]) {
             
             std::cout << "📋 Exporting tags from " << rootPath << " to " << outputFile << "\n\n";
             FileScanner::exportTags(rootPath, outputFile);
+            
+        } else if (mode == "--json") {
+            std::string outputFile = argc > 3 ? argv[3] : "symbols.json";
+            std::cout << "📤 JSON Export: " << outputFile << "\n";
+            
+            FileScanner::printWithSpinner("Building symbol index");
+            SymbolIndex index;
+            files = FileScanner::scanForAllSupportedFiles(rootPath);
+            index.buildIndex(files);
+            FileScanner::clearLine();
+            
+            FileScanner::printWithSpinner("Exporting to JSON");
+            JsonExporter exporter;
+            bool success = exporter.exportToFile(index, outputFile, true);
+            FileScanner::clearLine();
+            
+            if (success) {
+                std::cout << "✅ JSON export completed successfully!\n";
+                std::cout << "📄 File: " << outputFile << "\n";
+                std::cout << "📊 Symbols: " << index.size() << "\n";
+            }
+            
+        } else if (mode == "--json-compact") {
+            std::string outputFile = argc > 3 ? argv[3] : "symbols-compact.json";
+            std::cout << "📤 Compact JSON Export: " << outputFile << "\n";
+            
+            FileScanner::printWithSpinner("Building symbol index");
+            SymbolIndex index;
+            files = FileScanner::scanForAllSupportedFiles(rootPath);
+            index.buildIndex(files);
+            FileScanner::clearLine();
+            
+            FileScanner::printWithSpinner("Exporting compact JSON");
+            JsonExporter exporter;
+            std::ofstream file(outputFile);
+            if (file.is_open()) {
+                file << exporter.exportCompact(index);
+                file.close();
+                FileScanner::clearLine();
+                std::cout << "✅ Compact JSON export completed!\n";
+                std::cout << "📄 File: " << outputFile << "\n";
+                std::cout << "📊 Symbols: " << index.size() << " (compact format)\n";
+            } else {
+                FileScanner::clearLine();
+                std::cout << "❌ Failed to create file: " << outputFile << "\n";
+            }
+            
+        } else if (mode == "--json-stats") {
+            std::string outputFile = argc > 3 ? argv[3] : "symbols-stats.json";
+            std::cout << "📊 JSON with Statistics Export: " << outputFile << "\n";
+            
+            FileScanner::printWithSpinner("Building symbol index");
+            SymbolIndex index;
+            files = FileScanner::scanForAllSupportedFiles(rootPath);
+            index.buildIndex(files);
+            FileScanner::clearLine();
+            
+            FileScanner::printWithSpinner("Exporting JSON with statistics");
+            JsonExporter exporter;
+            std::ofstream file(outputFile);
+            if (file.is_open()) {
+                file << exporter.exportWithStats(index, rootPath);
+                file.close();
+                FileScanner::clearLine();
+                std::cout << "✅ JSON with statistics export completed!\n";
+                std::cout << "📄 File: " << outputFile << "\n";
+                std::cout << "📊 Symbols: " << index.size() << " (with detailed stats)\n";
+            } else {
+                FileScanner::clearLine();
+                std::cout << "❌ Failed to create file: " << outputFile << "\n";
+            }
+            
+        } else if (mode == "--json-lsp") {
+            std::string outputFile = argc > 3 ? argv[3] : "symbols-lsp.json";
+            std::cout << "🔗 LSP-Compatible JSON Export: " << outputFile << "\n";
+            
+            FileScanner::printWithSpinner("Building symbol index");
+            SymbolIndex index;
+            files = FileScanner::scanForAllSupportedFiles(rootPath);
+            index.buildIndex(files);
+            FileScanner::clearLine();
+            
+            FileScanner::printWithSpinner("Exporting LSP-compatible JSON");
+            JsonExporter exporter;
+            std::ofstream file(outputFile);
+            if (file.is_open()) {
+                file << exporter.exportForLSP(index, "file://" + rootPath);
+                file.close();
+                FileScanner::clearLine();
+                std::cout << "✅ LSP-compatible JSON export completed!\n";
+                std::cout << "📄 File: " << outputFile << "\n";
+                std::cout << "🔗 Format: Language Server Protocol compatible\n";
+                std::cout << "📊 Symbols: " << index.size() << "\n";
+            } else {
+                FileScanner::clearLine();
+                std::cout << "❌ Failed to create file: " << outputFile << "\n";
+            }
+            
+        } else if (mode == "--lsp") {
+            std::cout << "🛠️  Starting Navix LSP Server\n";
+            std::cout << "📁 Workspace: " << rootPath << "\n";
+            std::cout << "🔗 LSP Protocol: Language Server Protocol v3.17\n";
+            std::cout << "🚀 Ready for IDE/Editor connections...\n\n";
+            
+            LSPServer server;
+            server.setWorkspaceRoot(rootPath);
+            server.enableLogging(true);
+            
+            try {
+                server.start();
+            } catch (const std::exception& e) {
+                std::cerr << "❌ LSP Server error: " << e.what() << std::endl;
+                return 1;
+            }
+            
+        } else if (mode == "--search" && argc > 3) {
+            // Symbol search (fuzzy) with loading animation
+            std::string query = argv[3];
+            std::cout << "🔍 Searching for symbols matching '" << query << "' in: " << rootPath << "\n\n";
+            
+            std::vector<Symbol> symbols = FileScanner::searchSymbols(rootPath, query, true, true);
+            SymbolIndex tempIndex; // For the symbolTypeToString method
+            printSymbolResults(symbols, tempIndex, true); // Use new format
+            
+        } else if (mode == "--search-exact" && argc > 3) {
+            // Symbol search (exact) with loading animation
+            std::string query = argv[3];
+            std::cout << "🎯 Searching for exact symbol '" << query << "' in: " << rootPath << "\n\n";
+            
+            std::vector<Symbol> symbols = FileScanner::searchSymbols(rootPath, query, false, true);
+            SymbolIndex tempIndex; // For the symbolTypeToString method
+            printSymbolResults(symbols, tempIndex, true); // Use new format
+            
+        } else if (mode == "--goto" && argc > 3) {
+            // Navigate to symbol with loading animation
+            std::string symbolName = argv[3];
+            std::string editor = argc >= 5 ? argv[4] : "";
+            
+            std::cout << "🚀 Looking for symbol '" << symbolName << "' in: " << rootPath << "\n\n";
+            
+            if (!FileScanner::gotoSymbol(rootPath, symbolName, editor)) {
+                return 1;
+            }
             
         } else {
             std::cerr << "❌ Invalid arguments.\n\n";

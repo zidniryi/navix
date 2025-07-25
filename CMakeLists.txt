@@ -15,6 +15,8 @@ set(SOURCES
     src/FileWatcher.cpp
     src/PerformanceLogger.cpp
     src/AutocompleteEngine.cpp
+    src/JsonExporter.cpp
+    src/LSPServer.cpp
 )
 
 add_executable(navix ${SOURCES})

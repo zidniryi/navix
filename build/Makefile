@@ -201,6 +201,54 @@ src/FileWatcher.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/navix.dir/build.make CMakeFiles/navix.dir/src/FileWatcher.cpp.s
 .PHONY : src/FileWatcher.cpp.s
 
+src/JsonExporter.o: src/JsonExporter.cpp.o
+.PHONY : src/JsonExporter.o
+
+# target to build an object file
+src/JsonExporter.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/navix.dir/build.make CMakeFiles/navix.dir/src/JsonExporter.cpp.o
+.PHONY : src/JsonExporter.cpp.o
+
+src/JsonExporter.i: src/JsonExporter.cpp.i
+.PHONY : src/JsonExporter.i
+
+# target to preprocess a source file
+src/JsonExporter.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/navix.dir/build.make CMakeFiles/navix.dir/src/JsonExporter.cpp.i
+.PHONY : src/JsonExporter.cpp.i
+
+src/JsonExporter.s: src/JsonExporter.cpp.s
+.PHONY : src/JsonExporter.s
+
+# target to generate assembly for a file
+src/JsonExporter.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/navix.dir/build.make CMakeFiles/navix.dir/src/JsonExporter.cpp.s
+.PHONY : src/JsonExporter.cpp.s
+
+src/LSPServer.o: src/LSPServer.cpp.o
+.PHONY : src/LSPServer.o
+
+# target to build an object file
+src/LSPServer.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/navix.dir/build.make CMakeFiles/navix.dir/src/LSPServer.cpp.o
+.PHONY : src/LSPServer.cpp.o
+
+src/LSPServer.i: src/LSPServer.cpp.i
+.PHONY : src/LSPServer.i
+
+# target to preprocess a source file
+src/LSPServer.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/navix.dir/build.make CMakeFiles/navix.dir/src/LSPServer.cpp.i
+.PHONY : src/LSPServer.cpp.i
+
+src/LSPServer.s: src/LSPServer.cpp.s
+.PHONY : src/LSPServer.s
+
+# target to generate assembly for a file
+src/LSPServer.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/navix.dir/build.make CMakeFiles/navix.dir/src/LSPServer.cpp.s
+.PHONY : src/LSPServer.cpp.s
+
 src/PerformanceLogger.o: src/PerformanceLogger.cpp.o
 .PHONY : src/PerformanceLogger.o
 
@@ -315,6 +363,12 @@ help:
 	@echo "... src/FileWatcher.o"
 	@echo "... src/FileWatcher.i"
 	@echo "... src/FileWatcher.s"
+	@echo "... src/JsonExporter.o"
+	@echo "... src/JsonExporter.i"
+	@echo "... src/JsonExporter.s"
+	@echo "... src/LSPServer.o"
+	@echo "... src/LSPServer.i"
+	@echo "... src/LSPServer.s"
 	@echo "... src/PerformanceLogger.o"
 	@echo "... src/PerformanceLogger.i"
 	@echo "... src/PerformanceLogger.s"

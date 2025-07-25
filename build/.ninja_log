@@ -1,0 +1,11 @@
+# ninja log v7
+3	773	1753421788608592318	CMakeFiles/navix.dir/src/FileWatcher.cpp.o	d3997736884161a1
+2	921	1753421788607445188	CMakeFiles/navix.dir/src/FileScanner.cpp.o	886cb77c014b5d8c
+4	930	1753421788609741781	CMakeFiles/navix.dir/src/JsonExporter.cpp.o	c0f22a2c0ef5b57b
+3	942	1753421788609009320	CMakeFiles/navix.dir/src/PerformanceLogger.cpp.o	9c2ba5aa0b081cb9
+2	965	1753421788608136149	CMakeFiles/navix.dir/src/TUI.cpp.o	2940de3f25d303a0
+1	1057	1753421788606940519	CMakeFiles/navix.dir/src/main.cpp.o	40e331b122b0c348
+3	1123	1753421788609376155	CMakeFiles/navix.dir/src/AutocompleteEngine.cpp.o	a5bd06d9b1459f22
+2	1187	1753421788607665564	CMakeFiles/navix.dir/src/Symbol.cpp.o	a50aff9d2da1f50f
+4	1486	1753421788610066408	CMakeFiles/navix.dir/src/LSPServer.cpp.o	fd15c0ff0b1e9b22
+1486	1531	1753421790092238653	navix	ac623389b5828eb9
