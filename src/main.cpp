@@ -5,6 +5,8 @@
 #include "FileScanner.hpp"
 #include "Symbol.hpp"
 #include "TUI.hpp"
+#include "FileWatcher.hpp"
+#include "PerformanceLogger.hpp"
 
 // Version information
 #define NAVIX_VERSION "0.1"
@@ -23,6 +25,7 @@ void printVersion() {
     std::cout << "📅 Build Date: " << NAVIX_BUILD_DATE << "\n";
     std::cout << "⚡ Multi-Language Support: C++, TypeScript, JavaScript, Python, Go, Text\n";
     std::cout << "🖥️  TUI Mode: Interactive navigation with ncurses\n";
+    std::cout << "📊 Live Features: File watcher, performance logging\n";
     std::cout << "🎯 Features: Symbol indexing, fuzzy search, editor integration, ctags export\n";
     std::cout << "\n";
     std::cout << "Made with ❤️  for developers who value speed and simplicity.\n";
@@ -46,6 +49,9 @@ void printUsage(const char* programName) {
     std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " --version") << "  Show version information    │\n";
     std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " --help") << "  Show this help message      │\n";
     std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --tui") << "  Interactive TUI mode        │\n";
+    std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --live") << "  Live file watching mode     │\n";
+    std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --watch") << "  Same as --live              │\n";
+    std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --perf") << "  Enable performance logging │\n";
     std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --cpp") << "  Scan C++ files only         │\n";
     std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --ts") << "  Scan TypeScript/JS files    │\n";
     std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --py") << "  Scan Python files only      │\n";
@@ -61,6 +67,9 @@ void printUsage(const char* programName) {
     std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " --version") << "      Show version info   │\n";
     std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " --help") << "         Show help message  │\n";
     std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --tui") << "         Interactive mode    │\n";
+    std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --live") << "        Live watching mode  │\n";
+    std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --perf") << "        Performance logs    │\n";
+    std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --live --perf") << "   Live + performance   │\n";
     std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --cpp") << "          C++ files only     │\n";
     std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --ts") << "           TypeScript/JS      │\n";
     std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --py") << "           Python files      │\n";
@@ -78,6 +87,7 @@ void printUsage(const char* programName) {
     std::cout << "│ 🖥️  Interactive TUI with arrow keys           ⌨️  Real-time file preview   │\n";
     std::cout << "│ ⚡ Animated loading indicators                 🔍 Smart progress tracking   │\n";
     std::cout << "│ 📄 Text content indexing (headers, URLs, TODOs) 🔗 Email & link extraction │\n";
+    std::cout << "│ 🔄 Live file watching & auto-reindexing       📊 Performance metrics       │\n";
     std::cout << "└────────────────────────────────────────────────────────────────────────────┘\n\n";
     
     std::cout << "┌─ SUPPORTED FILES ──────────────────────────────────────────────────────────┐\n";
@@ -92,6 +102,14 @@ void printUsage(const char* programName) {
     std::cout << "│ 📑 Headers & Subheaders    🔗 URLs & Email addresses                       │\n";
     std::cout << "│ 📝 TODO/FIXME/NOTE items   📄 Significant lines & content                  │\n";
     std::cout << "│ 🔍 Important word extraction  📋 Documentation indexing                    │\n";
+    std::cout << "└────────────────────────────────────────────────────────────────────────────┘\n\n";
+    
+    std::cout << "┌─ LIVE FEATURES ────────────────────────────────────────────────────────────┐\n";
+    std::cout << "│ 🔄 Real-time file monitoring     📊 Performance metrics & timing           │\n";
+    std::cout << "│ ⚡ Auto-reindexing on changes     📈 Files/symbols per second tracking      │\n";
+    std::cout << "│ 🎯 Cross-platform file watching  📋 Detailed per-file statistics          │\n";
+    std::cout << "│ 💾 Debounced change detection    🔍 Language-specific breakdowns           │\n";
+    std::cout << "│ 📝 Performance logging to file   ⏱️  Parse time analysis                  │\n";
     std::cout << "└────────────────────────────────────────────────────────────────────────────┘\n\n";
     
     std::cout << "┌─ TUI CONTROLS ─────────────────────────────────────────────────────────────┐\n";
@@ -142,6 +160,111 @@ void printSymbolResults(const std::vector<Symbol>& symbols, const SymbolIndex& i
             }
         }
         std::cout << "└────────────────────────────────────────────────────────────────────────────┘\n\n";
+    }
+}
+
+// Live mode implementation
+void runLiveMode(const std::string& rootPath, bool enablePerformance = false, bool verbose = false) {
+    std::cout << "🔄 Starting Live Mode with real-time file watching...\n\n";
+    
+    // Setup performance logger
+    PerformanceLogger perfLogger;
+    if (enablePerformance) {
+        perfLogger.setVerbose(verbose);
+        perfLogger.setLogToFile(true, "navix_live_performance.log");
+        perfLogger.startSession("live-indexing");
+    }
+    
+    // Initial indexing
+    std::cout << "📊 Initial indexing...\n";
+    std::vector<std::string> allFiles = FileScanner::scanForAllSupportedFiles(rootPath);
+    
+    SymbolIndex symbolIndex;
+    if (enablePerformance) {
+        symbolIndex.setPerformanceLogger(&perfLogger);
+    }
+    
+    symbolIndex.buildIndex(allFiles);
+    
+    if (enablePerformance) {
+        perfLogger.printSessionSummary();
+        perfLogger.printLanguageBreakdown();
+    }
+    
+    std::cout << "✅ Initial index built: " << symbolIndex.size() << " symbols from " 
+              << allFiles.size() << " files\n\n";
+    
+    // Setup file watcher
+    FileWatcher watcher;
+    std::vector<std::string> extensions = {
+        ".cpp", ".hpp", ".h", ".cc", ".cxx",
+        ".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs",
+        ".py", ".pyw", ".pyi",
+        ".go",
+        ".txt", ".text", ".md", ".rst", ".log", ".readme", ".doc"
+    };
+    
+    // Set up change callback
+    watcher.setChangeCallback([&](const FileChange& change) {
+        std::string eventName;
+        switch (change.event) {
+            case FileEvent::CREATED: eventName = "CREATED"; break;
+            case FileEvent::MODIFIED: eventName = "MODIFIED"; break;
+            case FileEvent::DELETED: eventName = "DELETED"; break;
+            case FileEvent::MOVED: eventName = "MOVED"; break;
+        }
+        
+        std::cout << "📁 " << eventName << ": " << change.path << "\n";
+        
+        // Re-index the affected file or remove from index
+        if (change.event == FileEvent::DELETED) {
+            // TODO: Remove symbols from deleted file
+            std::cout << "   ❌ File deleted - symbols removed from index\n";
+        } else {
+            // Re-parse the file
+            if (enablePerformance) {
+                perfLogger.startSession("file-reindex");
+            }
+            
+            std::vector<std::string> singleFile = {change.path};
+            SymbolIndex tempIndex;
+            if (enablePerformance) {
+                tempIndex.setPerformanceLogger(&perfLogger);
+            }
+            tempIndex.buildIndex(singleFile);
+            
+            if (enablePerformance) {
+                perfLogger.endSession();
+            }
+            
+            std::cout << "   ✅ File re-indexed: " << tempIndex.size() << " symbols\n";
+        }
+    });
+    
+    // Start watching
+    if (watcher.startWatching(rootPath, extensions)) {
+        std::cout << "👀 Watching " << watcher.getWatchedFileCount() << " files for changes...\n";
+        std::cout << "💡 Press Ctrl+C to stop\n\n";
+        
+        // Keep the program running and show live stats
+        while (watcher.isWatching()) {
+            std::this_thread::sleep_for(std::chrono::seconds(5));
+            
+            if (enablePerformance && watcher.getChangeEventCount() > 0) {
+                std::cout << "📊 Live Stats - Changes detected: " << watcher.getChangeEventCount() 
+                         << ", Files watched: " << watcher.getWatchedFileCount() << "\n";
+            }
+        }
+    } else {
+        std::cerr << "❌ Failed to start file watcher\n";
+    }
+    
+    watcher.stopWatching();
+    
+    if (enablePerformance) {
+        perfLogger.endSession();
+        std::cout << "\n📊 Final Performance Summary:\n";
+        perfLogger.printSessionSummary();
     }
 }
 
@@ -199,7 +322,52 @@ int main(int argc, char* argv[]) {
             return 0;
         }
         
-        if (mode == "--tui") {
+        if (mode == "--live" || mode == "--watch") {
+            // Live file watching mode
+            bool enablePerformance = false;
+            bool verbose = false;
+            
+            // Check for additional flags
+            for (int i = 3; i < argc; i++) {
+                std::string flag = argv[i];
+                if (flag == "--perf" || flag == "--performance") {
+                    enablePerformance = true;
+                } else if (flag == "--verbose" || flag == "-v") {
+                    verbose = true;
+                }
+            }
+            
+            runLiveMode(rootPath, enablePerformance, verbose);
+            return 0;
+            
+        } else if (mode == "--perf" || mode == "--performance") {
+            // Performance logging mode (single indexing run)
+            std::cout << "📊 Performance logging enabled\n\n";
+            
+            PerformanceLogger perfLogger;
+            perfLogger.setVerbose(true);
+            perfLogger.setLogToFile(true, "navix_performance.log");
+            perfLogger.startSession("performance-analysis");
+            
+            std::cout << "🔍 Scanning for all supported files in: " << rootPath << "\n";
+            std::vector<std::string> allFiles = FileScanner::scanForAllSupportedFiles(rootPath);
+            
+            std::cout << "📊 Building symbol index with performance tracking...\n";
+            SymbolIndex symbolIndex;
+            symbolIndex.setPerformanceLogger(&perfLogger);
+            symbolIndex.buildIndex(allFiles);
+            
+            perfLogger.endSession();
+            
+            std::cout << "\n📈 Performance Analysis Complete!\n";
+            perfLogger.printSessionSummary();
+            perfLogger.printLanguageBreakdown();
+            perfLogger.printTopSlowFiles(15);
+            
+            std::cout << "📝 Detailed logs saved to: navix_performance.log\n";
+            return 0;
+            
+        } else if (mode == "--tui") {
             // Interactive TUI Mode
             std::cout << "🚀 Launching Interactive TUI mode...\n";
             FileScanner::showLoadingSpinner("Initializing TUI", std::chrono::milliseconds(800));

@@ -4,6 +4,9 @@
 #include <string>
 #include <vector>
 
+// Forward declaration
+class PerformanceLogger;
+
 enum class SymbolType {
     // C++ symbols
     FUNCTION,
@@ -77,8 +80,16 @@ struct Symbol {
 class SymbolIndex {
 private:
     std::vector<Symbol> symbols;
+    PerformanceLogger* m_logger; // Optional performance logger
     
 public:
+    SymbolIndex();
+    ~SymbolIndex() = default;
+    
+    // Performance logging
+    void setPerformanceLogger(PerformanceLogger* logger);
+    
+    // Core functionality
     void addSymbol(const Symbol& symbol);
     void buildIndex(const std::vector<std::string>& files);
     std::vector<Symbol> search(const std::string& query, bool fuzzy = true) const;
@@ -113,6 +124,9 @@ private:
     bool isSubHeader(const std::string& line) const;
     bool isSignificantLine(const std::string& line) const;
     std::string extractUrlOrEmail(const std::string& line, bool isEmail = false) const;
+    
+    // Performance helpers
+    std::string getLanguageFromPath(const std::string& filePath) const;
 };
 
 #endif // SYMBOL_HPP 

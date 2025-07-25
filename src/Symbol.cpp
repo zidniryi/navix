@@ -1,17 +1,31 @@
 #include "Symbol.hpp"
+#include "PerformanceLogger.hpp"
 #include <fstream>
 #include <iostream>
 #include <sstream>
 #include <algorithm>
 #include <regex>
 #include <cctype>
+#include <set> // Added for SymbolIndex::loadSymbols workaround
+
+SymbolIndex::SymbolIndex() : m_logger(nullptr) {
+}
+
+void SymbolIndex::setPerformanceLogger(PerformanceLogger* logger) {
+    m_logger = logger;
+}
 
 void SymbolIndex::addSymbol(const Symbol& symbol) {
     symbols.push_back(symbol);
+    
+    if (m_logger) {
+        m_logger->logSymbol(symbolTypeToString(symbol.type));
+    }
 }
 
 void SymbolIndex::buildIndex(const std::vector<std::string>& files) {
     clear();
+    
     for (const auto& file : files) {
         parseFile(file);
     }
@@ -107,8 +121,19 @@ bool SymbolIndex::isPlainText(const std::string& filePath) const {
 }
 
 void SymbolIndex::parseFile(const std::string& filePath) {
+    std::unique_ptr<FileTimer> timer;
+    size_t symbolCountBefore = symbols.size();
+    
+    if (m_logger) {
+        timer = std::make_unique<FileTimer>(*m_logger, filePath);
+        timer->setLanguage(getLanguageFromPath(filePath));
+    }
+    
     std::ifstream file(filePath);
     if (!file.is_open()) {
+        if (m_logger) {
+            m_logger->logError(filePath, "Could not open file");
+        }
         return;
     }
     
@@ -141,6 +166,12 @@ void SymbolIndex::parseFile(const std::string& filePath) {
             parseLineForSymbols(trimmed, filePath, lineNumber);
         }
         lineNumber++;
+    }
+    
+    // Update performance metrics
+    if (timer) {
+        size_t symbolsFound = symbols.size() - symbolCountBefore;
+        timer->setSymbolCount(symbolsFound);
     }
 }
 
@@ -646,4 +677,21 @@ std::string SymbolIndex::symbolTypeToString(SymbolType type) const {
         case SymbolType::UNKNOWN: return "unknown";
         default: return "unknown";
     }
+} 
+
+std::string SymbolIndex::getLanguageFromPath(const std::string& filePath) const {
+    if (isPlainText(filePath)) return "Text";
+    if (isGo(filePath)) return "Go";
+    if (isPython(filePath)) return "Python";
+    if (isTypeScriptOrJavaScript(filePath)) {
+        std::string ext = filePath.substr(filePath.find_last_of('.'));
+        return (ext == ".ts" || ext == ".tsx") ? "TypeScript" : "JavaScript";
+    }
+    
+    std::string ext = filePath.substr(filePath.find_last_of('.'));
+    if (ext == ".cpp" || ext == ".hpp" || ext == ".h" || ext == ".cc" || ext == ".cxx") {
+        return "C++";
+    }
+    
+    return "Unknown";
 } 

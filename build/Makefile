@@ -153,6 +153,54 @@ src/FileScanner.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/navix.dir/build.make CMakeFiles/navix.dir/src/FileScanner.cpp.s
 .PHONY : src/FileScanner.cpp.s
 
+src/FileWatcher.o: src/FileWatcher.cpp.o
+.PHONY : src/FileWatcher.o
+
+# target to build an object file
+src/FileWatcher.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/navix.dir/build.make CMakeFiles/navix.dir/src/FileWatcher.cpp.o
+.PHONY : src/FileWatcher.cpp.o
+
+src/FileWatcher.i: src/FileWatcher.cpp.i
+.PHONY : src/FileWatcher.i
+
+# target to preprocess a source file
+src/FileWatcher.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/navix.dir/build.make CMakeFiles/navix.dir/src/FileWatcher.cpp.i
+.PHONY : src/FileWatcher.cpp.i
+
+src/FileWatcher.s: src/FileWatcher.cpp.s
+.PHONY : src/FileWatcher.s
+
+# target to generate assembly for a file
+src/FileWatcher.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/navix.dir/build.make CMakeFiles/navix.dir/src/FileWatcher.cpp.s
+.PHONY : src/FileWatcher.cpp.s
+
+src/PerformanceLogger.o: src/PerformanceLogger.cpp.o
+.PHONY : src/PerformanceLogger.o
+
+# target to build an object file
+src/PerformanceLogger.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/navix.dir/build.make CMakeFiles/navix.dir/src/PerformanceLogger.cpp.o
+.PHONY : src/PerformanceLogger.cpp.o
+
+src/PerformanceLogger.i: src/PerformanceLogger.cpp.i
+.PHONY : src/PerformanceLogger.i
+
+# target to preprocess a source file
+src/PerformanceLogger.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/navix.dir/build.make CMakeFiles/navix.dir/src/PerformanceLogger.cpp.i
+.PHONY : src/PerformanceLogger.cpp.i
+
+src/PerformanceLogger.s: src/PerformanceLogger.cpp.s
+.PHONY : src/PerformanceLogger.s
+
+# target to generate assembly for a file
+src/PerformanceLogger.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/navix.dir/build.make CMakeFiles/navix.dir/src/PerformanceLogger.cpp.s
+.PHONY : src/PerformanceLogger.cpp.s
+
 src/Symbol.o: src/Symbol.cpp.o
 .PHONY : src/Symbol.o
 
@@ -237,6 +285,12 @@ help:
 	@echo "... src/FileScanner.o"
 	@echo "... src/FileScanner.i"
 	@echo "... src/FileScanner.s"
+	@echo "... src/FileWatcher.o"
+	@echo "... src/FileWatcher.i"
+	@echo "... src/FileWatcher.s"
+	@echo "... src/PerformanceLogger.o"
+	@echo "... src/PerformanceLogger.i"
+	@echo "... src/PerformanceLogger.s"
 	@echo "... src/Symbol.o"
 	@echo "... src/Symbol.i"
 	@echo "... src/Symbol.s"

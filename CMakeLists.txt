@@ -12,6 +12,8 @@ set(SOURCES
     src/FileScanner.cpp
     src/Symbol.cpp
     src/TUI.cpp
+    src/FileWatcher.cpp
+    src/PerformanceLogger.cpp
 )
 
 add_executable(navix ${SOURCES})
