@@ -6,6 +6,30 @@
 #include "Symbol.hpp"
 #include "TUI.hpp"
 
+// Version information
+#define NAVIX_VERSION "0.1"
+#define NAVIX_BUILD_DATE __DATE__
+
+void printVersion() {
+    std::cout << "\n";
+    std::cout << "┌────────────────────────────────────────────────────────────────────────────┐\n";
+    std::cout << "│                                                                            │\n";
+    std::cout << "│                         🚀 NAVIX - Navigate & Index                        │\n";
+    std::cout << "│                    Lightning-fast for your navigation                      │\n";
+    std::cout << "│                                                                            │\n";
+    std::cout << "└────────────────────────────────────────────────────────────────────────────┘\n";
+    std::cout << "\n";
+    std::cout << "🔢 Version: " << NAVIX_VERSION << "\n";
+    std::cout << "📅 Build Date: " << NAVIX_BUILD_DATE << "\n";
+    std::cout << "⚡ Multi-Language Support: C++, TypeScript, JavaScript, Python, Go, Text\n";
+    std::cout << "🖥️  TUI Mode: Interactive navigation with ncurses\n";
+    std::cout << "🎯 Features: Symbol indexing, fuzzy search, editor integration, ctags export\n";
+    std::cout << "\n";
+    std::cout << "Made with ❤️  for developers who value speed and simplicity.\n";
+    std::cout << "📄 License: MIT License\n";
+    std::cout << "🔗 Homepage: https://github.com/zidniryi/navix\n\n";
+}
+
 void printUsage(const char* programName) {
     std::cout << "\n";
     std::cout << "┌────────────────────────────────────────────────────────────────────────────┐\n";
@@ -19,6 +43,8 @@ void printUsage(const char* programName) {
     
     std::cout << "┌─ USAGE ────────────────────────────────────────────────────────────────────┐\n";
     std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <project_root>") << "  Scan all supported files    │\n";
+    std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " --version") << "  Show version information    │\n";
+    std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " --help") << "  Show this help message      │\n";
     std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --tui") << "  Interactive TUI mode        │\n";
     std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --cpp") << "  Scan C++ files only         │\n";
     std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --ts") << "  Scan TypeScript/JS files    │\n";
@@ -32,6 +58,8 @@ void printUsage(const char* programName) {
     
     std::cout << "┌─ EXAMPLES ─────────────────────────────────────────────────────────────────┐\n";
     std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " .") << "     Scan all files      │\n";
+    std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " --version") << "      Show version info   │\n";
+    std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " --help") << "         Show help message  │\n";
     std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --tui") << "         Interactive mode    │\n";
     std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --cpp") << "          C++ files only     │\n";
     std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --ts") << "           TypeScript/JS      │\n";
@@ -119,8 +147,24 @@ void printSymbolResults(const std::vector<Symbol>& symbols, const SymbolIndex& i
 
 int main(int argc, char* argv[]) {
     if (argc < 2) {
+        std::cerr << "❌ Please provide a project root path or use --version/--help.\n\n";
         printUsage(argv[0]);
         return 1;
+    }
+
+    // Handle standalone flags first (can be used without project path)
+    if (argc == 2) {
+        std::string flag = argv[1];
+        
+        if (flag == "--version" || flag == "-v") {
+            printVersion();
+            return 0;
+        }
+        
+        if (flag == "--help" || flag == "-h") {
+            printUsage(argv[0]);
+            return 0;
+        }
     }
 
     std::string rootPath = argv[1];
@@ -128,10 +172,9 @@ int main(int argc, char* argv[]) {
     std::string scanType = "all"; // default
 
     if (argc == 2) {
-        // Default: scan for all supported files
+        // Default scan mode for single argument (project path only)
         std::cout << "🔍 Scanning for all supported files in: " << rootPath << "\n";
         
-        // Show loading spinner while scanning
         FileScanner::printWithSpinner("Discovering files");
         files = FileScanner::scanForAllSupportedFiles(rootPath);
         FileScanner::clearLine();
@@ -142,11 +185,22 @@ int main(int argc, char* argv[]) {
             std::cout << "│ 📄 " << file << "\n";
         }
         std::cout << "└────────────────────────────────────────────────────────────────────────────┘\n\n";
+        
     } else if (argc >= 3) {
         std::string mode = argv[2];
         
+        if (mode == "--help" || mode == "-h") {
+            printUsage(argv[0]);
+            return 0;
+        }
+        
+        if (mode == "--version" || mode == "-v") {
+            printVersion();
+            return 0;
+        }
+        
         if (mode == "--tui") {
-            // Launch TUI mode
+            // Interactive TUI Mode
             std::cout << "🚀 Launching Interactive TUI mode...\n";
             FileScanner::showLoadingSpinner("Initializing TUI", std::chrono::milliseconds(800));
             
