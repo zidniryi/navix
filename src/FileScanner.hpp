@@ -5,6 +5,7 @@
 #include <string>
 #include <chrono>
 #include <thread>
+#include <atomic>
 #include "Symbol.hpp"
 
 class FileScanner {

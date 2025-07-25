@@ -1,488 +1,199 @@
-# 🚀 NAVIX - Navigate & Index
+# Navix - Navigate & Index
 
-**Lightning-fast for your navigation**
+A powerful C++ file navigator with symbol indexing and autocomplete capabilities.
 
-[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/your-repo/navix)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![C++17](https://img.shields.io/badge/C%2B%2B-17-blue.svg)](https://en.wikipedia.org/wiki/C%2B%2B17)
-[![TypeScript](https://img.shields.io/badge/TypeScript-Support-blue.svg)](https://www.typescriptlang.org/)
-[![JavaScript](https://img.shields.io/badge/JavaScript-Support-yellow.svg)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
-[![Python](https://img.shields.io/badge/Python-Support-blue.svg)](https://python.org/)
-[![Go](https://img.shields.io/badge/Go-Support-cyan.svg)](https://golang.org/)
-[![ncurses](https://img.shields.io/badge/TUI-ncurses-green.svg)](https://invisible-island.net/ncurses/)
+## Features
 
-> 🎯 **Find. Navigate. Index.**
-> 
-> A powerful, cross-platform code navigation and indexing tool that supports C++, TypeScript, JavaScript, Python, and Go. Built for developers who value speed and simplicity. Features both CLI and interactive TUI modes.
+- **Fast File Navigation**: TUI-based interface for quick file browsing
+- **Symbol Indexing**: Parse and index symbols from various programming languages
+- **Autocomplete Engine**: Intelligent code completion suggestions
+- **Cross-Platform**: Runs on Unix/Linux/macOS and Windows
+- **Performance Monitoring**: Built-in performance profiling
+- **LSP Server**: Language Server Protocol integration
+- **File Watching**: Real-time file system monitoring
 
-## ✨ Features
+## Cross-Platform Compilation
 
-### 🔍 **Multi-Language Support**
-- **C++**: `.cpp`, `.hpp`, `.h`, `.cc`, `.cxx`
-- **TypeScript**: `.ts`, `.tsx`
-- **JavaScript**: `.js`, `.jsx`, `.mjs`, `.cjs`
-- **Python**: `.py`, `.pyw`, `.pyi`
-- **Go**: `.go`
+Navix supports both Unix/Linux/macOS (using ncurses) and Windows (using Windows Console API).
 
-### ⚡ **Lightning-Fast Symbol Indexing**
-- Intelligent fuzzy search with ranking
-- Exact symbol matching
-- Cross-language symbol discovery
-- Real-time file scanning
+### Quick Build
 
-### 🖥️ **Interactive TUI Mode**
-- **ncurses-based** text interface
-- **Arrow key navigation** with smooth scrolling
-- **Real-time fuzzy search** as you type
-- **Dual-pane layout** with file preview
-- **Tab switching** between files and symbols
-- **Multi-language** symbol browsing
+Use the provided build script for easy compilation:
 
-### 🎯 **Smart Symbol Recognition**
-**C++ Symbols:**
-- Functions, Classes, Structs
-- Variables, Enums, Typedefs
-- Macros, Namespaces
-
-**TypeScript/JavaScript Symbols:**
-- Functions (regular & arrow)
-- Classes, Interfaces, Types
-- Variables (const, let, var)
-- Imports, Exports
-
-**Python Symbols:**
-- Functions, Classes, Methods
-- Variables, Decorators
-- Imports (from & import)
-- Lambda functions
-
-**Go Symbols:**
-- Functions, Methods (with receivers)
-- Structs, Interfaces, Types
-- Variables, Constants
-- Packages, Imports
-
-### 🚀 **Direct Editor Integration**
-- **Supported Editors**: vim, nvim, VS Code, emacs, nano, Sublime Text, Atom
-- **Auto-detection** of available editors
-- **Jump-to-definition** with line precision
-- **Environment variable** support (`$EDITOR`, `$VISUAL`)
-
-### 📋 **Universal ctags Export**
-- Standards-compliant ctags format
-- IDE integration ready
-- Multi-language symbol export
-- Sorted and optimized output
-
-### 🎨 **Beautiful CLI Interface**
-- Modern, clean design
-- Organized output with visual sections
-- Emoji-enhanced feedback
-- Professional error handling
-
-## 🛠️ Installation
-
-### Prerequisites
-- **C++17** compatible compiler
-- **CMake 3.10+**
-- **ncurses library** (for TUI mode)
-- **Git**
-
-### Install Dependencies
-
-**macOS (Homebrew):**
 ```bash
-brew install ncurses cmake
+# Build for all platforms
+./build.sh all
+
+# Build for current platform only
+./build.sh native
+
+# Build for Windows only (cross-compilation)
+./build.sh windows
+
+# Create macOS package installer (macOS only)
+./build.sh pkg
+
+# Clean build artifacts
+./build.sh clean
 ```
 
-**Ubuntu/Debian:**
+### Manual Compilation
+
+#### Unix/Linux/macOS (Native)
 ```bash
-sudo apt update
-sudo apt install libncurses5-dev libncursesw5-dev cmake build-essential
+# Install dependencies
+# macOS: brew install ncurses
+# Ubuntu/Debian: sudo apt install libncurses5-dev
+# Fedora: sudo dnf install ncurses-devel
+
+# Compile
+g++ -std=c++17 -o navix-native src/*.cpp $(pkg-config --cflags --libs ncurses)
 ```
 
-**Fedora/RHEL:**
+#### Windows (Cross-compilation)
 ```bash
-sudo dnf install ncurses-devel cmake gcc-c++
+# Install MinGW-w64
+# macOS: brew install mingw-w64
+# Ubuntu: sudo apt install mingw-w64
+
+# Cross-compile for Windows
+x86_64-w64-mingw32-g++ -std=c++17 -D_WIN32 -o navix-windows.exe src/*.cpp -static-libgcc -static-libstdc++
 ```
 
-### Build from Source
+### Platform-Specific Notes
+
+#### Windows
+- Uses Windows Console API instead of ncurses
+- Simplified TUI interface optimized for Windows terminal
+- All core functionality is preserved
+- Executable is statically linked for easy distribution
+
+#### Unix/Linux/macOS
+- Full ncurses-based TUI with rich interface
+- Advanced color support and window management
+- Requires ncurses development headers
+
+## Resolving the ncurses Issue
+
+If you encounter the error:
+```
+fatal error: ncurses.h: No such file or directory
+```
+
+This happens when trying to compile for Windows, which doesn't have ncurses. The project now includes:
+
+1. **Conditional compilation**: Uses ncurses on Unix/Linux/macOS, Windows Console API on Windows
+2. **Cross-platform abstractions**: Unified interface for both platforms
+3. **Automatic platform detection**: CMake and manual builds detect the target platform
+4. **Build scripts**: Automated building for both platforms
+
+## CMake Build (Alternative)
 
 ```bash
-# Clone the repository
-git clone https://github.com/zidniryi/navix.git
-cd navix
-
 # Create build directory
 mkdir build && cd build
 
-# Configure and build
+# Configure for native platform
 cmake ..
 make
 
-# Run Navix
-./navix
+# Configure for Windows cross-compilation
+cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/mingw-w64-toolchain.cmake ..
+make
 ```
 
-### Quick Test
-```bash
-# Test in current directory
-./navix .
+## Dependencies
 
-# Launch interactive TUI
-./navix . --tui
+### Runtime Dependencies
+- **Unix/Linux/macOS**: ncurses library
+- **Windows**: No external dependencies (statically linked)
 
-# Search for symbols
-./navix . --search main
+### Build Dependencies
+- **All platforms**: C++17 compatible compiler
+- **Unix/Linux/macOS**: ncurses development headers, pkg-config
+- **Windows cross-compilation**: MinGW-w64 toolchain
 
-# Export tags
-./navix . --export-tags
-```
+## Installation
 
-## 📖 Usage
-
-### Basic Commands
+### Option 1: macOS Package Installer (Recommended for macOS)
 
 ```bash
-# Scan all supported files
-navix <project_root>
+# Build and create package installer
+git clone https://github.com/your-repo/navix.git
+cd navix
+./build.sh pkg
 
-# Interactive TUI mode (recommended!)
-navix <project_root> --tui
+# Install the package
+sudo installer -pkg navix-installer.pkg -target /
+# Or double-click navix-installer.pkg in Finder
 
-# Language-specific scanning
-navix <project_root> --cpp              # C++ files only
-navix <project_root> --ts               # TypeScript/JavaScript files
-navix <project_root> --py               # Python files only
-navix <project_root> --go               # Go files only
-
-# Symbol search
-navix <project_root> --search <symbol>  # Smart fuzzy search
-navix <project_root> --search-exact <symbol>  # Exact match
-
-# Navigation
-navix <project_root> --goto <symbol>    # Jump to symbol
-navix <project_root> --goto <symbol> vim  # Open in specific editor
-
-# Export
-navix <project_root> --export-tags      # Generate tags.txt
-navix <project_root> --export-tags my.tags  # Custom filename
+# Verify installation
+navix --version
 ```
 
-### Advanced Usage
+### Option 2: Manual Build
+
+1. Clone the repository
+2. Install platform-specific dependencies
+3. Run the build script: `./build.sh all`
+4. Copy the appropriate executable to your desired location
+
+### Option 3: Direct Binary Usage
 
 ```bash
-# Filter by extensions
-navix . --ext .cpp .hpp .ts .py .go
-
-# Find specific files
-navix . --name main.cpp package.json app.py main.go
-
-# Pattern matching
-navix . --pattern test
+# Build without installation
+./build.sh native
+./navix-native /path/to/project
 ```
 
-## 🖥️ Interactive TUI Mode
+## Usage
 
-The TUI (Text User Interface) provides the best Navix experience with real-time navigation and preview.
-
-### Launch TUI
 ```bash
-navix . --tui
+# Unix/Linux/macOS
+./navix-native /path/to/your/project
+
+# Windows
+navix-windows.exe C:\path\to\your\project
 ```
 
-### TUI Controls
+## Platform Support Matrix
 
-| Key | Action | Description |
-|-----|--------|-------------|
-| `↑` `↓` | Navigate | Move through files/symbols |
-| `Enter` | Open | Open selected file or jump to symbol |
-| `Tab` | Switch Mode | Toggle between Files and Symbols view |
-| `/` | Search | Clear search and start new query |
-| `Backspace` | Delete | Remove character from search |
-| `p` | Toggle Preview | Show/hide file preview pane |
-| `q` / `ESC` | Quit | Exit TUI mode |
-| `Type` | Filter | Real-time fuzzy search |
+| Platform | TUI Interface | Symbol Indexing | Autocomplete | File Watching | Package Installer |
+|----------|---------------|-----------------|--------------|---------------|-------------------|
+| Linux    | ✅ (ncurses)   | ✅              | ✅           | ✅            | ⏳ (Future)       |
+| macOS    | ✅ (ncurses)   | ✅              | ✅           | ✅            | ✅ (.pkg)         |
+| Windows  | ✅ (Console)   | ✅              | ✅           | ✅            | ⏳ (Future)       |
 
-### TUI Features
+## macOS Package Installer Features
 
-#### **Dual-Pane Layout**
-- **Left Pane**: File list or symbol list
-- **Right Pane**: Live file preview (50 lines)
-- **Split Screen**: Optimal use of terminal space
+The macOS package installer (`.pkg`) provides:
 
-#### **Real-Time Search**
-- **Fuzzy Matching**: Type to filter results instantly
-- **Smart Scoring**: Best matches appear first
-- **Live Preview**: See file contents as you navigate
+- **System-wide installation**: Installs to `/usr/local/bin/navix`
+- **Automatic PATH setup**: Available from any terminal
+- **Man page integration**: Access help with `man navix`
+- **Clean uninstall**: Proper removal of previous versions
+- **Documentation**: Includes README, LICENSE, and CONTRIBUTING files
+- **Installer scripts**: Pre/post-install automation
+- **Metadata**: Proper package identification and versioning
 
-#### **Two Modes**
-- **Files Mode**: Browse and search all project files
-- **Symbols Mode**: Navigate functions, classes, variables across languages
+### Package Contents
 
-#### **Visual Feedback**
-- **Color Coding**: Different colors for file types and symbol types
-- **Status Bar**: Shows current mode, search query, and counts
-- **Scroll Indicators**: Visual cues for long lists
-
-## 🌟 Examples
-
-### Quick Start
-```bash
-# Navigate to your project
-cd /path/to/your/project
-
-# Launch interactive mode (recommended)
-navix . --tui
+```
+/usr/local/bin/navix                    # Main executable
+/usr/local/share/man/man1/navix.1       # Man page
+/usr/local/share/doc/navix/README.md    # Documentation
+/usr/local/share/doc/navix/LICENSE      # License
+/usr/local/share/doc/navix/CONTRIBUTING.md  # Contributing guide
 ```
 
-### TUI Workflow
-```bash
-# 1. Launch TUI
-navix . --tui
+## Contributing
 
-# 2. Search for files
-#    Type: main.cpp
-#    Result: Shows matching files with preview
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on contributing to this project.
 
-# 3. Switch to symbols (Tab key)
-#    Type: App
-#    Result: Shows all symbols containing "App"
+## License
 
-# 4. Navigate with arrow keys
-#    Enter: Opens file at symbol location
-```
-
-### Find Symbols
-```bash
-# Find all symbols containing "App"
-navix . --search App
-
-# Find exact symbol match
-navix . --search-exact AppComponent
-
-# Results show: symbol(type) in file:line
-# Example output:
-# 📍 AppComponent(js-class) in App.tsx:15
-# 📍 App(js-function) in main.ts:8
-# 📍 main(py-function) in app.py:23
-# 📍 Handler(go-struct) in server.go:45
-```
-
-### Navigate to Code
-```bash
-# Jump to main function
-navix . --goto main
-
-# Open in VS Code
-navix . --goto AppComponent code
-
-# Open in vim
-navix . --goto ProcessData vim
-```
-
-### IDE Integration
-```bash
-# Generate ctags for your editor
-navix . --export-tags
-
-# Use with vim
-vim -t AppComponent
-
-# Use with emacs
-emacs --eval "(find-tag \"AppComponent\")"
-```
-
-### Language-Specific Scanning
-```bash
-# C++ projects
-navix . --cpp
-# Found symbols: functions, classes, namespaces...
-
-# TypeScript/React projects  
-navix . --ts
-# Found symbols: components, interfaces, types...
-
-# Python projects
-navix . --py
-# Found symbols: functions, classes, decorators...
-
-# Go projects
-navix . --go
-# Found symbols: functions, structs, interfaces...
-
-# Mixed codebases
-navix .
-# Found symbols from all supported languages
-```
-
-## 🔧 Editor Setup
-
-### Environment Variables
-```bash
-# Set your preferred editor
-export EDITOR=vim          # or code, emacs, nano, etc.
-export VISUAL=code         # Alternative editor variable
-```
-
-### Vim Integration
-```bash
-# Generate tags
-navix . --export-tags
-
-# Add to .vimrc
-set tags=./tags,tags
-
-# Navigate in vim
-:tag SymbolName
-Ctrl+]  # Jump to definition
-Ctrl+T  # Jump back
-```
-
-### VS Code Integration
-```bash
-# Direct navigation
-navix . --goto SymbolName code
-
-# Or set as default editor
-export EDITOR=code
-navix . --goto SymbolName
-```
-
-## 📊 Output Examples
-
-### TUI Interface
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                         🚀 NAVIX - Navigate & Index                        │
-└─────────────────────────────────────────────────────────────────────────────┘
-
-┌─ Search Files ──────────────────┐
-│ Search: App                     │
-└─────────────────────────────────┘
-
-┌─ Files ─────────────────────────┐  ┌─ Preview ───────────────────────┐
-│ > src/App.tsx                   │  │ import React from 'react';      │
-│   src/AppRouter.tsx             │  │ import './App.css';             │
-│   src/components/AppHeader.tsx  │  │                                 │
-│   src/utils/AppConfig.js        │  │ function App() {                │
-│   tests/App.test.ts             │  │   return (                      │
-│   ...                           │  │     <div className="App">       │
-└─────────────────────────────────┘  │       <header>                  │
-                                     │         <h1>Welcome</h1>        │
-Files: 5/247 | Search: App    [FILES] │       </header>                 │
-↑↓:Navigate | Enter:Open | Tab:Switch │     </div>                      │
-                                     │   );                            │
-                                     │ }                               │
-                                     └─────────────────────────────────┘
-```
-
-### Symbol Search Results
-```
-┌─ RESULTS ──────────────────────────────────────────────────────────────────┐
-│ Found 9 symbol(s):
-│ 📍 AppComponent(js-class) in App.tsx:15
-│ 📍 App(js-function) in main.ts:8  
-│ 📍 AppRouter(js-class) in router.ts:23
-│ 📍 appConfig(const) in config.js:5
-│ 📍 Application(class) in main.cpp:12
-│ 📍 app_init(py-function) in app.py:45
-│ 📍 AppHandler(py-class) in handlers.py:8
-│ 📍 AppServer(go-struct) in server.go:23
-│ 📍 AppConfig(go-type) in config.go:12
-└────────────────────────────────────────────────────────────────────────────┘
-```
-
-### File Scanning
-```
-┌─ FILES ────────────────────────────────────────────────────────────────────┐
-│ Found 1547 matching files:
-│ 📄 src/components/App.tsx
-│ 📄 src/utils/helpers.ts
-│ 📄 src/main.cpp
-│ 📄 include/parser.hpp
-│ 📄 scripts/deploy.py
-│ 📄 tests/test_api.py
-│ 📄 cmd/server/main.go
-│ 📄 pkg/handlers/auth.go
-│ ...
-└────────────────────────────────────────────────────────────────────────────┘
-```
-
-## 🎯 Supported Symbol Types
-
-| Language | Types | Description |
-|----------|-------|-------------|
-| **C++** | `function`, `class`, `struct` | Core C++ constructs |
-| | `variable`, `enum`, `typedef` | Data types |
-| | `macro`, `namespace` | Preprocessor & organization |
-| **TypeScript** | `js-function`, `arrow-func` | Function declarations |
-| | `js-class`, `interface`, `type` | Type system |
-| | `const`, `let`, `var` | Variables |
-| **JavaScript** | `import`, `export` | Module system |
-| **Python** | `py-function`, `py-class` | Core Python constructs |
-| | `py-variable`, `py-decorator` | Variables & decorators |
-| | `py-import`, `py-from-import` | Module imports |
-| | `py-lambda` | Lambda functions |
-| **Go** | `go-function`, `go-method` | Functions & methods |
-| | `go-struct`, `go-interface` | Data structures |
-| | `go-type`, `go-variable` | Type definitions & variables |
-| | `go-constant`, `go-package` | Constants & packages |
-| | `go-import` | Module imports |
-
-## 💡 Tips & Best Practices
-
-### TUI Tips
-- **Start with TUI**: Always try `navix . --tui` first for the best experience
-- **Use fuzzy search**: Type partial names for quick filtering
-- **Preview files**: Keep preview pane open to understand context
-- **Switch modes**: Use Tab to toggle between file and symbol browsing
-
-### Performance Tips
-- **Project scope**: Run Navix from your project root for best results
-- **Language focus**: Use `--cpp`, `--ts`, `--py` for language-specific projects
-- **Editor integration**: Export tags for seamless IDE/editor integration
-
-### Workflow Integration
-- **Tag generation**: Regular `navix . --export-tags` for editor users
-- **Symbol navigation**: Use `--goto` for quick symbol jumping
-- **Search refinement**: Start broad, then narrow with exact search
-
-## 🤝 Contributing
-
-We welcome contributions! Whether you're fixing bugs, adding features, or improving documentation, your help makes Navix better for everyone.
-
-**👉 See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines:**
-- 🚀 Quick start guide for new contributors
-- 📋 Development setup and coding standards  
-- 🧪 How to add support for new programming languages
-- 🐛 Bug reporting and feature request processes
-- 🎯 Areas where we need help
-
-## 📄 License
-
-This project is licensed under the **MIT License**.
-
-**👉 See [LICENSE](LICENSE) for full license text.**
-
-**TL;DR**: You can use, modify, and distribute this software freely. Just include the original license notice.
-
-## 🙏 Acknowledgments
-
-- **Inspired by** ctags, cscope, and modern language servers
-- **Built with** modern C++17 and ncurses libraries
-- **TUI powered by** ncurses for cross-platform terminal interfaces
-- **Designed for** developer productivity and code navigation
-- **Made with ❤️** for developers who value speed and simplicity
-
-## 📞 Support
-
-- **GitHub Issues**: [Report bugs & request features](https://github.com/zidniryi/navix/issues)
-- **Discussions**: [Community discussions](https://github.com/zidniryi/navix/discussions)
-- **Documentation**: This README and inline code comments
+This project is licensed under the terms specified in [LICENSE](LICENSE).
 
 ---
 
-**⭐ Star this repo if Navix helps you navigate code faster!**
-
-*Made with ❤️ by developers, for developers.* 
+**Note**: The cross-platform support ensures that Navix works seamlessly across different operating systems while maintaining full functionality. The Windows version uses a simplified but fully functional console interface that provides the same core navigation and indexing capabilities. 

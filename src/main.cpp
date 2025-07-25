@@ -2,6 +2,11 @@
 #include <vector>
 #include <string>
 #include <iomanip>
+#ifdef _WIN32
+    #include <algorithm>
+#else
+    #include <filesystem>
+#endif
 #include "FileScanner.hpp"
 #include "Symbol.hpp"
 #include "TUI.hpp"
@@ -405,7 +410,16 @@ int main(int argc, char* argv[]) {
                 std::cout << "┌─ AUTOCOMPLETE RESULTS ─────────────────────────────────────────────────────┐\n";
                 for (size_t i = 0; i < results.size(); ++i) {
                     const auto& result = results[i];
+#ifdef _WIN32
+                    // Windows fallback: extract filename manually
+                    std::string filename = result.file;
+                    size_t lastSlash = filename.find_last_of("/\\");
+                    if (lastSlash != std::string::npos) {
+                        filename = filename.substr(lastSlash + 1);
+                    }
+#else
                     std::string filename = std::filesystem::path(result.file).filename().string();
+#endif
                     
                     std::cout << "│ " << std::setw(2) << (i + 1) << ". " 
                              << std::setw(20) << result.suggestion
