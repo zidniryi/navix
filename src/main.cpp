@@ -24,7 +24,7 @@ void printVersion() {
     std::cout << "\n";
     std::cout << "🔢 Version: " << NAVIX_VERSION << "\n";
     std::cout << "📅 Build Date: " << NAVIX_BUILD_DATE << "\n";
-    std::cout << "⚡ Multi-Language Support: C++, TypeScript, JavaScript, Python, Go, Text\n";
+    std::cout << "⚡ Multi-Language Support: C++, TypeScript, JavaScript, Python, Go, Swift, Text\n";
     std::cout << "🖥️  TUI Mode: Interactive navigation with ncurses\n";
     std::cout << "📊 Live Features: File watcher, performance logging\n";
     std::cout << "🔍 Autocomplete: Offline prefix & fuzzy matching\n";
@@ -60,6 +60,7 @@ void printUsage(const char* programName) {
     std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --ts") << "  Scan TypeScript/JS files    │\n";
     std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --py") << "  Scan Python files only      │\n";
     std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --go") << "  Scan Go files only          │\n";
+    std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --swift") << "  Scan Swift files only       │\n";
     std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --txt") << "  Scan text files only        │\n";
     std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --search <symbol>") << "  Smart symbol search         │\n";
     std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --goto <symbol>") << "  Navigate to symbol          │\n";
@@ -80,6 +81,7 @@ void printUsage(const char* programName) {
     std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --ts") << "           TypeScript/JS      │\n";
     std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --py") << "           Python files      │\n";
     std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --go") << "           Go files          │\n";
+    std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --swift") << "        Swift files        │\n";
     std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --txt") << "          Text/Doc files     │\n";
     std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --search README") << "      Find documentation   │\n";
     std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --search TODO") << "        Find TODO items     │\n";
@@ -87,7 +89,7 @@ void printUsage(const char* programName) {
     std::cout << "└────────────────────────────────────────────────────────────────────────────┘\n\n";
     
     std::cout << "┌─ FEATURES ─────────────────────────────────────────────────────────────────┐\n";
-    std::cout << "│ ⚡ Multi-language support (C++,TS,JS,PY,Go,TXT) 🎯 Intelligent fuzzy search │\n";
+    std::cout << "│ ⚡ Multi-language support (C++,TS,JS,PY,Go,Swift,TXT) 🎯 Intelligent fuzzy search │\n";
     std::cout << "│ 🚀 Direct editor navigation                   📋 Universal ctags export    │\n";
     std::cout << "│ 🛠️  Auto-detect editors (vim, vscode)         🎨 Beautiful, readable output│\n";
     std::cout << "│ 🖥️  Interactive TUI with arrow keys           ⌨️  Real-time file preview   │\n";
@@ -102,6 +104,7 @@ void printUsage(const char* programName) {
     std::cout << "│ TypeScript/JavaScript: .ts • .tsx • .js • .jsx • .mjs • .cjs              │\n";
     std::cout << "│ Python: .py • .pyw • .pyi                                                  │\n";
     std::cout << "│ Go: .go                                                                     │\n";
+    std::cout << "│ Swift: .swift                                                               │\n";
     std::cout << "│ Text: .txt • .md • .rst • .log • .readme • .doc                            │\n";
     std::cout << "└────────────────────────────────────────────────────────────────────────────┘\n\n";
     
@@ -506,6 +509,17 @@ int main(int argc, char* argv[]) {
                 std::cout << "│ 📄 " << file << "\n";
             }
             std::cout << "└────────────────────────────────────────────────────────────────────────────┘\n\n";
+            
+        } else if (mode == "--swift") {
+            std::cout << "🔍 Scanning for Swift files in: " << rootPath << "\n";
+            FileScanner::printWithSpinner("Discovering Swift files");
+            files = FileScanner::scanForSwift(rootPath);
+            FileScanner::clearLine();
+            
+            std::cout << "📊 Found " << files.size() << " Swift files:\n\n";
+            for (const auto& file : files) {
+                std::cout << "📄 " << file << "\n";
+            }
             
         } else if (mode == "--txt") {
             // Scan text files only

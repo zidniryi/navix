@@ -19,16 +19,23 @@ std::vector<std::string> FileScanner::scanForCppFiles(const std::string& rootPat
     return scanByExtensions(rootPath, defaultExtensions);
 }
 
+std::vector<std::string> FileScanner::scanForSwift(const std::string& rootPath) {
+    std::vector<std::string> swiftExtensions = {".swift"};
+    return scanByExtensions(rootPath, swiftExtensions);
+}
+
 std::vector<std::string> FileScanner::scanForAllSupportedFiles(const std::string& rootPath) {
     std::vector<std::string> allExtensions = {
         // C++ files
         ".cpp", ".hpp", ".h", ".cc", ".cxx",
-        // TypeScript/JavaScript files
+        // TypeScript/JavaScript files  
         ".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs",
         // Python files
         ".py", ".pyw", ".pyi",
         // Go files
         ".go",
+        // Swift files
+        ".swift",
         // Text files
         ".txt", ".text", ".md", ".rst", ".log", ".readme", ".doc"
     };
@@ -295,7 +302,24 @@ void FileScanner::exportTags(const std::string& rootPath, const std::string& out
             case SymbolType::PY_LAMBDA: kind = "l"; break;
             case SymbolType::GO_CONSTANT: kind = "d"; break;
             case SymbolType::GO_PACKAGE: kind = "p"; break;
-            // Text file symbols
+
+                
+                // Swift symbols
+                case SymbolType::SWIFT_FUNCTION:
+                case SymbolType::SWIFT_METHOD:
+                case SymbolType::SWIFT_INITIALIZER: kind = "f"; break;
+                case SymbolType::SWIFT_CLASS: kind = "c"; break;
+                case SymbolType::SWIFT_STRUCT: kind = "s"; break;
+                case SymbolType::SWIFT_PROTOCOL: kind = "P"; break;
+                case SymbolType::SWIFT_ENUM: kind = "e"; break;
+                case SymbolType::SWIFT_EXTENSION: kind = "E"; break;
+                case SymbolType::SWIFT_VARIABLE:
+                case SymbolType::SWIFT_CONSTANT:
+                case SymbolType::SWIFT_PROPERTY: kind = "v"; break;
+                case SymbolType::SWIFT_SUBSCRIPT: kind = "S"; break;
+                case SymbolType::SWIFT_IMPORT: kind = "i"; break;
+                
+                // Text file symbols
             case SymbolType::TXT_HEADER:
             case SymbolType::TXT_SUBHEADER: kind = "h"; break;
             case SymbolType::TXT_URL: kind = "u"; break;

@@ -330,6 +330,8 @@ std::string PerformanceLogger::getLanguageFromPath(const std::string& path) cons
         return "Python";
     } else if (ext == ".go") {
         return "Go";
+    } else if (ext == ".swift") {
+        return "Swift";
     } else if (ext == ".txt" || ext == ".md" || ext == ".rst" || ext == ".log") {
         return "Text";
     }

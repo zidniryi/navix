@@ -15,6 +15,7 @@ public:
     static std::vector<std::string> scanForPython(const std::string& rootPath);
     static std::vector<std::string> scanForGo(const std::string& rootPath);
     static std::vector<std::string> scanForPlainText(const std::string& rootPath);
+    static std::vector<std::string> scanForSwift(const std::string& rootPath);
     static std::vector<std::string> scanByExtensions(const std::string& rootPath, const std::vector<std::string>& extensions);
     static std::vector<std::string> scanByFilenames(const std::string& rootPath, const std::vector<std::string>& filenames);
     static std::vector<std::string> scanByPattern(const std::string& rootPath, const std::string& pattern);

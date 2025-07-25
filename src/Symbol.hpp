@@ -52,6 +52,21 @@ enum class SymbolType {
     GO_PACKAGE,
     GO_IMPORT,
     
+    // Swift symbols
+    SWIFT_FUNCTION,
+    SWIFT_METHOD,
+    SWIFT_CLASS,
+    SWIFT_STRUCT,
+    SWIFT_PROTOCOL,
+    SWIFT_ENUM,
+    SWIFT_EXTENSION,
+    SWIFT_VARIABLE,
+    SWIFT_CONSTANT,
+    SWIFT_PROPERTY,
+    SWIFT_INITIALIZER,
+    SWIFT_SUBSCRIPT,
+    SWIFT_IMPORT,
+    
     // Text file symbols
     TXT_HEADER,
     TXT_SUBHEADER,
@@ -109,10 +124,12 @@ private:
     void parsePython(const std::string& line, const std::string& filePath, int lineNumber);
     void parseGo(const std::string& line, const std::string& filePath, int lineNumber);
     void parsePlainText(const std::string& line, const std::string& filePath, int lineNumber);
+    void parseSwift(const std::string& line, const std::string& filePath, int lineNumber);
     bool isTypeScriptOrJavaScript(const std::string& filePath) const;
     bool isPython(const std::string& filePath) const;
     bool isGo(const std::string& filePath) const;
     bool isPlainText(const std::string& filePath) const;
+    bool isSwift(const std::string& filePath) const;
     int levenshteinDistance(const std::string& s1, const std::string& s2) const;
     bool isPrefixMatch(const std::string& symbol, const std::string& query) const;
     

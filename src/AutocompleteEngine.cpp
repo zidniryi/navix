@@ -25,6 +25,10 @@ AutocompleteEngine::AutocompleteEngine()
     m_typeBoosts[SymbolType::PY_CLASS] = 1.1;
     m_typeBoosts[SymbolType::GO_FUNCTION] = 1.2;
     m_typeBoosts[SymbolType::GO_STRUCT] = 1.1;
+    m_typeBoosts[SymbolType::SWIFT_FUNCTION] = 1.2;
+    m_typeBoosts[SymbolType::SWIFT_CLASS] = 1.1;
+    m_typeBoosts[SymbolType::SWIFT_STRUCT] = 1.1;
+    m_typeBoosts[SymbolType::SWIFT_PROTOCOL] = 1.15;
 }
 
 void AutocompleteEngine::buildIndex(const std::vector<Symbol>& symbols) {

@@ -124,6 +124,11 @@ bool SymbolIndex::isPlainText(const std::string& filePath) const {
            ext == ".log" || ext == ".readme" || ext == ".doc";
 }
 
+bool SymbolIndex::isSwift(const std::string& filePath) const {
+    std::string ext = filePath.substr(filePath.find_last_of('.'));
+    return ext == ".swift";
+}
+
 void SymbolIndex::parseFile(const std::string& filePath) {
     std::unique_ptr<FileTimer> timer;
     size_t symbolCountBefore = symbols.size();
@@ -160,6 +165,8 @@ void SymbolIndex::parseFile(const std::string& filePath) {
         // Parse based on file type
         if (isPlainText(filePath)) {
             parsePlainText(line, filePath, lineNumber);  // Use original line with whitespace
+        } else if (isSwift(filePath)) {
+            parseSwift(trimmed, filePath, lineNumber);
         } else if (isGo(filePath)) {
             parseGo(trimmed, filePath, lineNumber);
         } else if (isPython(filePath)) {
@@ -657,15 +664,30 @@ std::string SymbolIndex::symbolTypeToString(SymbolType type) const {
         case SymbolType::PY_LAMBDA: return "py-lambda";
         
         // Go symbols
-        case SymbolType::GO_FUNCTION: return "go-function";
-        case SymbolType::GO_METHOD: return "go-method";
-        case SymbolType::GO_STRUCT: return "go-struct";
-        case SymbolType::GO_INTERFACE: return "go-interface";
-        case SymbolType::GO_TYPE: return "go-type";
-        case SymbolType::GO_VARIABLE: return "go-variable";
-        case SymbolType::GO_CONSTANT: return "go-constant";
-        case SymbolType::GO_PACKAGE: return "go-package";
-        case SymbolType::GO_IMPORT: return "go-import";
+        case SymbolType::GO_FUNCTION: return "go_function";
+        case SymbolType::GO_METHOD: return "go_method";
+        case SymbolType::GO_STRUCT: return "go_struct";
+        case SymbolType::GO_INTERFACE: return "go_interface";
+        case SymbolType::GO_TYPE: return "go_type";
+        case SymbolType::GO_VARIABLE: return "go_variable";
+        case SymbolType::GO_CONSTANT: return "go_constant";
+        case SymbolType::GO_PACKAGE: return "go_package";
+        case SymbolType::GO_IMPORT: return "go_import";
+        
+        // Swift symbols
+        case SymbolType::SWIFT_FUNCTION: return "swift_function";
+        case SymbolType::SWIFT_METHOD: return "swift_method";
+        case SymbolType::SWIFT_CLASS: return "swift_class";
+        case SymbolType::SWIFT_STRUCT: return "swift_struct";
+        case SymbolType::SWIFT_PROTOCOL: return "swift_protocol";
+        case SymbolType::SWIFT_ENUM: return "swift_enum";
+        case SymbolType::SWIFT_EXTENSION: return "swift_extension";
+        case SymbolType::SWIFT_VARIABLE: return "swift_variable";
+        case SymbolType::SWIFT_CONSTANT: return "swift_constant";
+        case SymbolType::SWIFT_PROPERTY: return "swift_property";
+        case SymbolType::SWIFT_INITIALIZER: return "swift_initializer";
+        case SymbolType::SWIFT_SUBSCRIPT: return "swift_subscript";
+        case SymbolType::SWIFT_IMPORT: return "swift_import";
         
         // Text file symbols
         case SymbolType::TXT_HEADER: return "header";
@@ -685,6 +707,7 @@ std::string SymbolIndex::symbolTypeToString(SymbolType type) const {
 
 std::string SymbolIndex::getLanguageFromPath(const std::string& filePath) const {
     if (isPlainText(filePath)) return "Text";
+    if (isSwift(filePath)) return "Swift";
     if (isGo(filePath)) return "Go";
     if (isPython(filePath)) return "Python";
     if (isTypeScriptOrJavaScript(filePath)) {
@@ -698,4 +721,103 @@ std::string SymbolIndex::getLanguageFromPath(const std::string& filePath) const 
     }
     
     return "Unknown";
+} 
+
+void SymbolIndex::parseSwift(const std::string& line, const std::string& filePath, int lineNumber) {
+    // Swift function definitions
+    std::regex funcRegex(R"(\s*func\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*\()");
+    std::smatch match;
+    
+    // Functions
+    if (std::regex_search(line, match, funcRegex)) {
+        std::string funcName = match[1].str();
+        addSymbol(Symbol(funcName, SymbolType::SWIFT_FUNCTION, filePath, lineNumber, line));
+        return;
+    }
+    
+    // Class definitions
+    std::regex classRegex(R"(\s*class\s+([a-zA-Z_][a-zA-Z0-9_]*))");
+    if (std::regex_search(line, match, classRegex)) {
+        std::string className = match[1].str();
+        addSymbol(Symbol(className, SymbolType::SWIFT_CLASS, filePath, lineNumber, line));
+        return;
+    }
+    
+    // Struct definitions
+    std::regex structRegex(R"(\s*struct\s+([a-zA-Z_][a-zA-Z0-9_]*))");
+    if (std::regex_search(line, match, structRegex)) {
+        std::string structName = match[1].str();
+        addSymbol(Symbol(structName, SymbolType::SWIFT_STRUCT, filePath, lineNumber, line));
+        return;
+    }
+    
+    // Protocol definitions
+    std::regex protocolRegex(R"(\s*protocol\s+([a-zA-Z_][a-zA-Z0-9_]*))");
+    if (std::regex_search(line, match, protocolRegex)) {
+        std::string protocolName = match[1].str();
+        addSymbol(Symbol(protocolName, SymbolType::SWIFT_PROTOCOL, filePath, lineNumber, line));
+        return;
+    }
+    
+    // Enum definitions
+    std::regex enumRegex(R"(\s*enum\s+([a-zA-Z_][a-zA-Z0-9_]*))");
+    if (std::regex_search(line, match, enumRegex)) {
+        std::string enumName = match[1].str();
+        addSymbol(Symbol(enumName, SymbolType::SWIFT_ENUM, filePath, lineNumber, line));
+        return;
+    }
+    
+    // Extension definitions
+    std::regex extensionRegex(R"(\s*extension\s+([a-zA-Z_][a-zA-Z0-9_]*))");
+    if (std::regex_search(line, match, extensionRegex)) {
+        std::string extensionName = match[1].str();
+        addSymbol(Symbol(extensionName, SymbolType::SWIFT_EXTENSION, filePath, lineNumber, line));
+        return;
+    }
+    
+    // Variable declarations (var)
+    std::regex varRegex(R"(\s*var\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*[:\=])");
+    if (std::regex_search(line, match, varRegex)) {
+        std::string varName = match[1].str();
+        addSymbol(Symbol(varName, SymbolType::SWIFT_VARIABLE, filePath, lineNumber, line));
+        return;
+    }
+    
+    // Constant declarations (let)
+    std::regex letRegex(R"(\s*let\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*[:\=])");
+    if (std::regex_search(line, match, letRegex)) {
+        std::string letName = match[1].str();
+        addSymbol(Symbol(letName, SymbolType::SWIFT_CONSTANT, filePath, lineNumber, line));
+        return;
+    }
+    
+    // Computed properties (with { get/set })
+    std::regex propertyRegex(R"(\s*var\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*:\s*[^{]*\s*\{)");
+    if (std::regex_search(line, match, propertyRegex)) {
+        std::string propName = match[1].str();
+        addSymbol(Symbol(propName, SymbolType::SWIFT_PROPERTY, filePath, lineNumber, line));
+        return;
+    }
+    
+    // Initializers
+    std::regex initRegex(R"(\s*init\s*\()");
+    if (std::regex_search(line, match, initRegex)) {
+        addSymbol(Symbol("init", SymbolType::SWIFT_INITIALIZER, filePath, lineNumber, line));
+        return;
+    }
+    
+    // Subscripts
+    std::regex subscriptRegex(R"(\s*subscript\s*\()");
+    if (std::regex_search(line, match, subscriptRegex)) {
+        addSymbol(Symbol("subscript", SymbolType::SWIFT_SUBSCRIPT, filePath, lineNumber, line));
+        return;
+    }
+    
+    // Import statements
+    std::regex importRegex(R"(\s*import\s+([a-zA-Z_][a-zA-Z0-9_]*))");
+    if (std::regex_search(line, match, importRegex)) {
+        std::string importName = match[1].str();
+        addSymbol(Symbol(importName, SymbolType::SWIFT_IMPORT, filePath, lineNumber, line));
+        return;
+    }
 } 
