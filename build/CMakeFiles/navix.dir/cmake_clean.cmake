@@ -1,4 +1,6 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/navix.dir/src/AutocompleteEngine.cpp.o"
+  "CMakeFiles/navix.dir/src/AutocompleteEngine.cpp.o.d"
   "CMakeFiles/navix.dir/src/FileScanner.cpp.o"
   "CMakeFiles/navix.dir/src/FileScanner.cpp.o.d"
   "CMakeFiles/navix.dir/src/FileWatcher.cpp.o"

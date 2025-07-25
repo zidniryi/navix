@@ -7,6 +7,7 @@
 #include "TUI.hpp"
 #include "FileWatcher.hpp"
 #include "PerformanceLogger.hpp"
+#include "AutocompleteEngine.hpp"
 
 // Version information
 #define NAVIX_VERSION "0.1"
@@ -26,6 +27,7 @@ void printVersion() {
     std::cout << "⚡ Multi-Language Support: C++, TypeScript, JavaScript, Python, Go, Text\n";
     std::cout << "🖥️  TUI Mode: Interactive navigation with ncurses\n";
     std::cout << "📊 Live Features: File watcher, performance logging\n";
+    std::cout << "🔍 Autocomplete: Offline prefix & fuzzy matching\n";
     std::cout << "🎯 Features: Symbol indexing, fuzzy search, editor integration, ctags export\n";
     std::cout << "\n";
     std::cout << "Made with ❤️  for developers who value speed and simplicity.\n";
@@ -49,6 +51,8 @@ void printUsage(const char* programName) {
     std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " --version") << "  Show version information    │\n";
     std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " --help") << "  Show this help message      │\n";
     std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --tui") << "  Interactive TUI mode        │\n";
+    std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --autocomplete") << "  Interactive autocomplete    │\n";
+    std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --complete <query>") << "  Get completions for query   │\n";
     std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --live") << "  Live file watching mode     │\n";
     std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --watch") << "  Same as --live              │\n";
     std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --perf") << "  Enable performance logging │\n";
@@ -67,6 +71,8 @@ void printUsage(const char* programName) {
     std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " --version") << "      Show version info   │\n";
     std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " --help") << "         Show help message  │\n";
     std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --tui") << "         Interactive mode    │\n";
+    std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --autocomplete") << "   Interactive complete  │\n";
+    std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --complete app") << "     Complete 'app'       │\n";
     std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --live") << "        Live watching mode  │\n";
     std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --perf") << "        Performance logs    │\n";
     std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --live --perf") << "   Live + performance   │\n";
@@ -88,6 +94,7 @@ void printUsage(const char* programName) {
     std::cout << "│ ⚡ Animated loading indicators                 🔍 Smart progress tracking   │\n";
     std::cout << "│ 📄 Text content indexing (headers, URLs, TODOs) 🔗 Email & link extraction │\n";
     std::cout << "│ 🔄 Live file watching & auto-reindexing       📊 Performance metrics       │\n";
+    std::cout << "│ 🔍 Offline autocomplete with prefix & fuzzy   🎯 Multi-algorithm matching  │\n";
     std::cout << "└────────────────────────────────────────────────────────────────────────────┘\n\n";
     
     std::cout << "┌─ SUPPORTED FILES ──────────────────────────────────────────────────────────┐\n";
@@ -110,6 +117,14 @@ void printUsage(const char* programName) {
     std::cout << "│ 🎯 Cross-platform file watching  📋 Detailed per-file statistics          │\n";
     std::cout << "│ 💾 Debounced change detection    🔍 Language-specific breakdowns           │\n";
     std::cout << "│ 📝 Performance logging to file   ⏱️  Parse time analysis                  │\n";
+    std::cout << "└────────────────────────────────────────────────────────────────────────────┘\n\n";
+    
+    std::cout << "┌─ AUTOCOMPLETE FEATURES ────────────────────────────────────────────────────┐\n";
+    std::cout << "│ 🔍 Offline symbol completion     🎯 Multiple matching algorithms           │\n";
+    std::cout << "│ ⚡ Lightning-fast prefix matching 🧠 Intelligent fuzzy search              │\n";
+    std::cout << "│ 📝 Interactive completion mode   🏆 Smart scoring & ranking                │\n";
+    std::cout << "│ 🌳 Trie-based efficient indexing  💡 Context-aware suggestions            │\n";
+    std::cout << "│ 📊 Configurable weights & boosts  🎨 Beautiful formatted results          │\n";
     std::cout << "└────────────────────────────────────────────────────────────────────────────┘\n\n";
     
     std::cout << "┌─ TUI CONTROLS ─────────────────────────────────────────────────────────────┐\n";
@@ -322,7 +337,57 @@ int main(int argc, char* argv[]) {
             return 0;
         }
         
-        if (mode == "--live" || mode == "--watch") {
+        if (mode == "--autocomplete" || mode == "--complete-interactive") {
+            // Interactive autocomplete mode
+            std::cout << "🔍 Loading symbols for autocomplete...\n";
+            
+            std::vector<std::string> allFiles = FileScanner::scanForAllSupportedFiles(rootPath);
+            SymbolIndex symbolIndex;
+            symbolIndex.buildIndex(allFiles);
+            
+            AutocompleteEngine autocomplete;
+            autocomplete.buildIndex(symbolIndex.getSymbols());
+            autocomplete.printStatistics();
+            
+            autocomplete.runInteractiveMode("autocomplete> ");
+            return 0;
+            
+        } else if (mode == "--complete" && argc >= 4) {
+            // Single query autocomplete
+            std::string query = argv[3];
+            
+            std::cout << "🔍 Building autocomplete index...\n";
+            std::vector<std::string> allFiles = FileScanner::scanForAllSupportedFiles(rootPath);
+            SymbolIndex symbolIndex;
+            symbolIndex.buildIndex(allFiles);
+            
+            AutocompleteEngine autocomplete;
+            autocomplete.buildIndex(symbolIndex.getSymbols());
+            
+            std::cout << "🔍 Getting completions for '" << query << "'...\n\n";
+            auto results = autocomplete.getCompletions(query, 15);
+            
+            if (results.empty()) {
+                std::cout << "❌ No completions found for '" << query << "'\n";
+            } else {
+                std::cout << "✅ Found " << results.size() << " completion(s) for '" << query << "':\n\n";
+                
+                std::cout << "┌─ AUTOCOMPLETE RESULTS ─────────────────────────────────────────────────────┐\n";
+                for (size_t i = 0; i < results.size(); ++i) {
+                    const auto& result = results[i];
+                    std::string filename = std::filesystem::path(result.file).filename().string();
+                    
+                    std::cout << "│ " << std::setw(2) << (i + 1) << ". " 
+                             << std::setw(20) << result.suggestion
+                             << " │ " << std::setw(8) << result.matchType
+                             << " │ " << std::setw(6) << std::fixed << std::setprecision(2) << result.score
+                             << " │ " << std::setw(15) << filename << ":" << result.line << "\n";
+                }
+                std::cout << "└────────────────────────────────────────────────────────────────────────────┘\n";
+            }
+            return 0;
+            
+        } else if (mode == "--live" || mode == "--watch") {
             // Live file watching mode
             bool enablePerformance = false;
             bool verbose = false;

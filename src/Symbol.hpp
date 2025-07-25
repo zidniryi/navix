@@ -99,6 +99,9 @@ public:
     size_t size() const;
     std::string symbolTypeToString(SymbolType type) const;
     
+    // Access to symbols for autocomplete
+    const std::vector<Symbol>& getSymbols() const;
+    
 private:
     void parseFile(const std::string& filePath);
     void parseLineForSymbols(const std::string& line, const std::string& filePath, int lineNumber);

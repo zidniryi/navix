@@ -8,6 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
+  "/Users/mac/Project/cpp-assist/src/AutocompleteEngine.cpp" "CMakeFiles/navix.dir/src/AutocompleteEngine.cpp.o" "gcc" "CMakeFiles/navix.dir/src/AutocompleteEngine.cpp.o.d"
   "/Users/mac/Project/cpp-assist/src/FileScanner.cpp" "CMakeFiles/navix.dir/src/FileScanner.cpp.o" "gcc" "CMakeFiles/navix.dir/src/FileScanner.cpp.o.d"
   "/Users/mac/Project/cpp-assist/src/FileWatcher.cpp" "CMakeFiles/navix.dir/src/FileWatcher.cpp.o" "gcc" "CMakeFiles/navix.dir/src/FileWatcher.cpp.o.d"
   "/Users/mac/Project/cpp-assist/src/PerformanceLogger.cpp" "CMakeFiles/navix.dir/src/PerformanceLogger.cpp.o" "gcc" "CMakeFiles/navix.dir/src/PerformanceLogger.cpp.o.d"

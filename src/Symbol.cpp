@@ -98,6 +98,10 @@ size_t SymbolIndex::size() const {
     return symbols.size();
 }
 
+const std::vector<Symbol>& SymbolIndex::getSymbols() const {
+    return symbols;
+}
+
 bool SymbolIndex::isTypeScriptOrJavaScript(const std::string& filePath) const {
     std::string ext = filePath.substr(filePath.find_last_of('.'));
     return ext == ".ts" || ext == ".tsx" || ext == ".js" || ext == ".jsx" || 

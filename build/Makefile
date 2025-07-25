@@ -129,6 +129,30 @@ navix/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/navix.dir/build.make CMakeFiles/navix.dir/build
 .PHONY : navix/fast
 
+src/AutocompleteEngine.o: src/AutocompleteEngine.cpp.o
+.PHONY : src/AutocompleteEngine.o
+
+# target to build an object file
+src/AutocompleteEngine.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/navix.dir/build.make CMakeFiles/navix.dir/src/AutocompleteEngine.cpp.o
+.PHONY : src/AutocompleteEngine.cpp.o
+
+src/AutocompleteEngine.i: src/AutocompleteEngine.cpp.i
+.PHONY : src/AutocompleteEngine.i
+
+# target to preprocess a source file
+src/AutocompleteEngine.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/navix.dir/build.make CMakeFiles/navix.dir/src/AutocompleteEngine.cpp.i
+.PHONY : src/AutocompleteEngine.cpp.i
+
+src/AutocompleteEngine.s: src/AutocompleteEngine.cpp.s
+.PHONY : src/AutocompleteEngine.s
+
+# target to generate assembly for a file
+src/AutocompleteEngine.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/navix.dir/build.make CMakeFiles/navix.dir/src/AutocompleteEngine.cpp.s
+.PHONY : src/AutocompleteEngine.cpp.s
+
 src/FileScanner.o: src/FileScanner.cpp.o
 .PHONY : src/FileScanner.o
 
@@ -282,6 +306,9 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... navix"
+	@echo "... src/AutocompleteEngine.o"
+	@echo "... src/AutocompleteEngine.i"
+	@echo "... src/AutocompleteEngine.s"
 	@echo "... src/FileScanner.o"
 	@echo "... src/FileScanner.i"
 	@echo "... src/FileScanner.s"

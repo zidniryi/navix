@@ -14,6 +14,7 @@ set(SOURCES
     src/TUI.cpp
     src/FileWatcher.cpp
     src/PerformanceLogger.cpp
+    src/AutocompleteEngine.cpp
 )
 
 add_executable(navix ${SOURCES})
