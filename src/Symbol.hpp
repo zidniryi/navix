@@ -147,6 +147,18 @@ private:
     
     // Performance helpers
     std::string getLanguageFromPath(const std::string& filePath) const;
+    bool isKotlin(const std::string& filePath) const;
+    bool isJava(const std::string& filePath) const;
+    bool isPHP(const std::string& filePath) const;
+    bool isBash(const std::string& filePath) const;
+    bool isRuby(const std::string& filePath) const;
+    bool isRust(const std::string& filePath) const;
+    void parseKotlin(const std::string& line, const std::string& filePath, int lineNumber);
+    void parseJava(const std::string& line, const std::string& filePath, int lineNumber);
+    void parsePHP(const std::string& line, const std::string& filePath, int lineNumber);
+    void parseBash(const std::string& line, const std::string& filePath, int lineNumber);
+    void parseRuby(const std::string& line, const std::string& filePath, int lineNumber);
+    void parseRust(const std::string& line, const std::string& filePath, int lineNumber);
 };
 
 #endif // SYMBOL_HPP 

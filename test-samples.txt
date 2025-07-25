@@ -1,0 +1,72 @@
+# Creating test files for all new languages
+
+# Java
+echo 'public class HelloWorld {
+    public static void main(String[] args) {
+        System.out.println("Hello, World!");
+    }
+    private void helper() {}
+}' > HelloWorld.java
+
+# PHP
+echo '<?php
+class User {
+    public function getName() {
+        return $this->name;
+    }
+    private $name;
+}
+function greet($name) {
+    echo "Hello $name";
+}
+?>' > user.php
+
+# Bash
+echo '#!/bin/bash
+SCRIPT_NAME="test"
+function setup() {
+    echo "Setting up"
+}
+cleanup() {
+    echo "Cleaning up"
+}' > script.sh
+
+# Ruby
+echo 'class Calculator
+  def add(a, b)
+    a + b
+  end
+end
+
+module MathUtils
+  def self.square(n)
+    n * n
+  end
+end' > calculator.rb
+
+# Rust
+echo 'pub fn main() {
+    println!("Hello, Rust!");
+}
+
+pub struct Point {
+    x: f64,
+    y: f64,
+}
+
+pub enum Color {
+    Red,
+    Blue,
+}
+
+pub trait Drawable {
+    fn draw(&self);
+}
+
+impl Drawable for Point {
+    fn draw(&self) {
+        println!("Point at ({}, {})", self.x, self.y);
+    }
+}' > main.rs
+
+echo "Test files created successfully!"

@@ -32,7 +32,7 @@ void printVersion() {
     std::cout << "\n";
     std::cout << "🔢 Version: " << NAVIX_VERSION << "\n";
     std::cout << "📅 Build Date: " << NAVIX_BUILD_DATE << "\n";
-    std::cout << "⚡ Multi-Language Support: C++, TypeScript, JavaScript, Python, Go, Swift, Text\n";
+    std::cout << "⚡ Multi-Language Support: C++, TypeScript, JavaScript, Python, Go, Swift, Text, Etc.\n";
     std::cout << "🖥️  TUI Mode: Interactive navigation with ncurses\n";
     std::cout << "📊 Live Features: File watcher, performance logging\n";
     std::cout << "🔍 Autocomplete: Offline prefix & fuzzy matching\n";
@@ -69,6 +69,12 @@ void printUsage(const char* programName) {
     std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --py") << "  Scan Python files only      │\n";
     std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --go") << "  Scan Go files only          │\n";
     std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --swift") << "  Scan Swift files only       │\n";
+    std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --kt") << "  Scan Kotlin files only      │\n";
+    std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --java") << "  Scan Java files only        │\n";
+    std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --php") << "  Scan PHP files only         │\n";
+    std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --bash") << "  Scan Bash/Shell files only  │\n";
+    std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --ruby") << "  Scan Ruby files only        │\n";
+    std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --rust") << "  Scan Rust files only        │\n";
     std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --txt") << "  Scan text files only        │\n";
     std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --search <symbol>") << "  Smart symbol search         │\n";
     std::cout << "│ " << std::left << std::setw(40) << (std::string(programName) + " <root> --goto <symbol>") << "  Navigate to symbol          │\n";
@@ -95,7 +101,13 @@ void printUsage(const char* programName) {
     std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --py") << "           Python files      │\n";
     std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --go") << "           Go files          │\n";
     std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --swift") << "        Swift files        │\n";
-    std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --txt") << "          Text/Doc files     │\n";
+    std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --kt") << "            Kotlin files       │\n";
+    std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --java") << "          Java files         │\n";
+    std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --php") << "           PHP files          │\n";
+    std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --bash") << "          Bash/Shell files   │\n";
+    std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --ruby") << "          Ruby files         │\n";
+    std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --rust") << "          Rust files         │\n";
+    std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --txt") << "           Text/Doc files     │\n";
     std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --search README") << "      Find documentation   │\n";
     std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --search TODO") << "        Find TODO items     │\n";
     std::cout << "│ " << std::left << std::setw(45) << (std::string(programName) + " . --export-tags") << "    Generate tags       │\n";
@@ -106,7 +118,7 @@ void printUsage(const char* programName) {
     std::cout << "└────────────────────────────────────────────────────────────────────────────┘\n\n";
     
     std::cout << "┌─ FEATURES ─────────────────────────────────────────────────────────────────┐\n";
-    std::cout << "│ ⚡ Multi-language support (C++,TS,JS,PY,Go,Swift,TXT) 🎯 Intelligent fuzzy search │\n";
+    std::cout << "│ ⚡ Multi-language support (C++,TS,JS,PY,Go,Swift,TXT, Etc.) 🎯 Intelligent fuzzy search │\n";
     std::cout << "│ 🚀 Direct editor navigation                   📋 Universal ctags export    │\n";
     std::cout << "│ 🛠️  Auto-detect editors (vim, vscode)         🎨 Beautiful, readable output│\n";
     std::cout << "│ 🖥️  Interactive TUI with arrow keys           ⌨️  Real-time file preview   │\n";
@@ -125,7 +137,14 @@ void printUsage(const char* programName) {
     std::cout << "│ Python: .py • .pyw • .pyi                                                  │\n";
     std::cout << "│ Go: .go                                                                     │\n";
     std::cout << "│ Swift: .swift                                                               │\n";
+    std::cout << "│ Kotlin: .kt                                                                 │\n";
+    std::cout << "│ Java: .java                                                                 │\n";
+    std::cout << "│ PHP: .php • .phtml • .php3 • .php4 • .php5 • .phps                        │\n";
+    std::cout << "│ Bash/Shell: .sh • .bash • .zsh • .fish • .ksh • .csh                      │\n";
+    std::cout << "│ Ruby: .rb • .rbw • .rake • .gemspec                                        │\n";
+    std::cout << "│ Rust: .rs                                                                   │\n";
     std::cout << "│ Text: .txt • .md • .rst • .log • .readme • .doc                            │\n";
+    std::cout << "│ Unknown: Any other file type (generic symbol extraction)                   │\n";
     std::cout << "└────────────────────────────────────────────────────────────────────────────┘\n\n";
     
     std::cout << "┌─ TEXT FILE FEATURES ───────────────────────────────────────────────────────┐\n";
@@ -562,6 +581,96 @@ int main(int argc, char* argv[]) {
             for (const auto& file : files) {
                 std::cout << "📄 " << file << "\n";
             }
+            
+        } else if (mode == "--kt") {
+            // Scan Kotlin files only
+            std::cout << "🔍 Scanning for Kotlin files in: " << rootPath << "\n";
+            
+            FileScanner::printWithSpinner("Discovering Kotlin files");
+            files = FileScanner::scanForKotlin(rootPath);
+            FileScanner::clearLine();
+            
+            std::cout << "\n┌─ FILES ────────────────────────────────────────────────────────────────────┐\n";
+            std::cout << "│ 🎉 Found " << files.size() << " matching files:\n";
+            for (const auto& file : files) {
+                std::cout << "│ 📄 " << file << "\n";
+            }
+            std::cout << "└────────────────────────────────────────────────────────────────────────────┘\n\n";
+            
+        } else if (mode == "--java") {
+            // Scan Java files only
+            std::cout << "🔍 Scanning for Java files in: " << rootPath << "\n";
+            
+            FileScanner::printWithSpinner("Discovering Java files");
+            files = FileScanner::scanForJava(rootPath);
+            FileScanner::clearLine();
+            
+            std::cout << "\n┌─ FILES ────────────────────────────────────────────────────────────────────┐\n";
+            std::cout << "│ 🎉 Found " << files.size() << " matching files:\n";
+            for (const auto& file : files) {
+                std::cout << "│ 📄 " << file << "\n";
+            }
+            std::cout << "└────────────────────────────────────────────────────────────────────────────┘\n\n";
+            
+        } else if (mode == "--php") {
+            // Scan PHP files only
+            std::cout << "🔍 Scanning for PHP files in: " << rootPath << "\n";
+            
+            FileScanner::printWithSpinner("Discovering PHP files");
+            files = FileScanner::scanForPHP(rootPath);
+            FileScanner::clearLine();
+            
+            std::cout << "\n┌─ FILES ────────────────────────────────────────────────────────────────────┐\n";
+            std::cout << "│ 🎉 Found " << files.size() << " matching files:\n";
+            for (const auto& file : files) {
+                std::cout << "│ 📄 " << file << "\n";
+            }
+            std::cout << "└────────────────────────────────────────────────────────────────────────────┘\n\n";
+            
+        } else if (mode == "--bash") {
+            // Scan Bash/Shell files only
+            std::cout << "🔍 Scanning for Bash/Shell files in: " << rootPath << "\n";
+            
+            FileScanner::printWithSpinner("Discovering Bash/Shell files");
+            files = FileScanner::scanForBash(rootPath);
+            FileScanner::clearLine();
+            
+            std::cout << "\n┌─ FILES ────────────────────────────────────────────────────────────────────┐\n";
+            std::cout << "│ 🎉 Found " << files.size() << " matching files:\n";
+            for (const auto& file : files) {
+                std::cout << "│ 📄 " << file << "\n";
+            }
+            std::cout << "└────────────────────────────────────────────────────────────────────────────┘\n\n";
+            
+        } else if (mode == "--ruby") {
+            // Scan Ruby files only
+            std::cout << "🔍 Scanning for Ruby files in: " << rootPath << "\n";
+            
+            FileScanner::printWithSpinner("Discovering Ruby files");
+            files = FileScanner::scanForRuby(rootPath);
+            FileScanner::clearLine();
+            
+            std::cout << "\n┌─ FILES ────────────────────────────────────────────────────────────────────┐\n";
+            std::cout << "│ 🎉 Found " << files.size() << " matching files:\n";
+            for (const auto& file : files) {
+                std::cout << "│ 📄 " << file << "\n";
+            }
+            std::cout << "└────────────────────────────────────────────────────────────────────────────┘\n\n";
+            
+        } else if (mode == "--rust") {
+            // Scan Rust files only
+            std::cout << "🔍 Scanning for Rust files in: " << rootPath << "\n";
+            
+            FileScanner::printWithSpinner("Discovering Rust files");
+            files = FileScanner::scanForRust(rootPath);
+            FileScanner::clearLine();
+            
+            std::cout << "\n┌─ FILES ────────────────────────────────────────────────────────────────────┐\n";
+            std::cout << "│ 🎉 Found " << files.size() << " matching files:\n";
+            for (const auto& file : files) {
+                std::cout << "│ 📄 " << file << "\n";
+            }
+            std::cout << "└────────────────────────────────────────────────────────────────────────────┘\n\n";
             
         } else if (mode == "--txt") {
             // Scan text files only

@@ -36,6 +36,18 @@ std::vector<std::string> FileScanner::scanForAllSupportedFiles(const std::string
         ".go",
         // Swift files
         ".swift",
+        // Kotlin files
+        ".kt",
+        // Java files
+        ".java",
+        // PHP files
+        ".php", ".phtml", ".php3", ".php4", ".php5", ".phps",
+        // Bash/Shell files
+        ".sh", ".bash", ".zsh", ".fish", ".ksh", ".csh",
+        // Ruby files
+        ".rb", ".rbw", ".rake", ".gemspec",
+        // Rust files
+        ".rs",
         // Text files
         ".txt", ".text", ".md", ".rst", ".log", ".readme", ".doc"
     };
@@ -60,6 +72,36 @@ std::vector<std::string> FileScanner::scanForGo(const std::string& rootPath) {
 std::vector<std::string> FileScanner::scanForPlainText(const std::string& rootPath) {
     std::vector<std::string> textExtensions = {".txt", ".text", ".md", ".rst", ".log", ".readme", ".doc"};
     return scanByExtensions(rootPath, textExtensions);
+}
+
+std::vector<std::string> FileScanner::scanForKotlin(const std::string& rootPath) {
+    std::vector<std::string> kotlinExtensions = {".kt"};
+    return scanByExtensions(rootPath, kotlinExtensions);
+}
+
+std::vector<std::string> FileScanner::scanForJava(const std::string& rootPath) {
+    std::vector<std::string> javaExtensions = {".java"};
+    return scanByExtensions(rootPath, javaExtensions);
+}
+
+std::vector<std::string> FileScanner::scanForPHP(const std::string& rootPath) {
+    std::vector<std::string> phpExtensions = {".php", ".phtml", ".php3", ".php4", ".php5", ".phps"};
+    return scanByExtensions(rootPath, phpExtensions);
+}
+
+std::vector<std::string> FileScanner::scanForBash(const std::string& rootPath) {
+    std::vector<std::string> bashExtensions = {".sh", ".bash", ".zsh", ".fish", ".ksh", ".csh"};
+    return scanByExtensions(rootPath, bashExtensions);
+}
+
+std::vector<std::string> FileScanner::scanForRuby(const std::string& rootPath) {
+    std::vector<std::string> rubyExtensions = {".rb", ".rbw", ".rake", ".gemspec"};
+    return scanByExtensions(rootPath, rubyExtensions);
+}
+
+std::vector<std::string> FileScanner::scanForRust(const std::string& rootPath) {
+    std::vector<std::string> rustExtensions = {".rs"};
+    return scanByExtensions(rootPath, rustExtensions);
 }
 
 std::vector<std::string> FileScanner::scanByExtensions(const std::string& rootPath, const std::vector<std::string>& extensions) {

@@ -129,6 +129,38 @@ bool SymbolIndex::isSwift(const std::string& filePath) const {
     return ext == ".swift";
 }
 
+bool SymbolIndex::isKotlin(const std::string& filePath) const {
+    std::string ext = filePath.substr(filePath.find_last_of('.'));
+    return ext == ".kt";
+}
+
+bool SymbolIndex::isJava(const std::string& filePath) const {
+    std::string ext = filePath.substr(filePath.find_last_of('.'));
+    return ext == ".java";
+}
+
+bool SymbolIndex::isPHP(const std::string& filePath) const {
+    std::string ext = filePath.substr(filePath.find_last_of('.'));
+    return ext == ".php" || ext == ".phtml" || ext == ".php3" || 
+           ext == ".php4" || ext == ".php5" || ext == ".phps";
+}
+
+bool SymbolIndex::isBash(const std::string& filePath) const {
+    std::string ext = filePath.substr(filePath.find_last_of('.'));
+    return ext == ".sh" || ext == ".bash" || ext == ".zsh" || 
+           ext == ".fish" || ext == ".ksh" || ext == ".csh";
+}
+
+bool SymbolIndex::isRuby(const std::string& filePath) const {
+    std::string ext = filePath.substr(filePath.find_last_of('.'));
+    return ext == ".rb" || ext == ".rbw" || ext == ".rake" || ext == ".gemspec";
+}
+
+bool SymbolIndex::isRust(const std::string& filePath) const {
+    std::string ext = filePath.substr(filePath.find_last_of('.'));
+    return ext == ".rs";
+}
+
 void SymbolIndex::parseFile(const std::string& filePath) {
     std::unique_ptr<FileTimer> timer;
     size_t symbolCountBefore = symbols.size();
@@ -157,7 +189,7 @@ void SymbolIndex::parseFile(const std::string& filePath) {
         
         // Skip comments and empty lines (but not for plain text files)
         if (!isPlainText(filePath) && (trimmed.empty() || trimmed.substr(0, 2) == "//" || 
-            (trimmed[0] == '#' && !isPython(filePath)))) {
+            (trimmed[0] == '#' && !isPython(filePath) && !isBash(filePath) && !isRuby(filePath)))) {
             lineNumber++;
             continue;
         }
@@ -167,6 +199,18 @@ void SymbolIndex::parseFile(const std::string& filePath) {
             parsePlainText(line, filePath, lineNumber);  // Use original line with whitespace
         } else if (isSwift(filePath)) {
             parseSwift(trimmed, filePath, lineNumber);
+        } else if (isKotlin(filePath)) {
+            parseKotlin(trimmed, filePath, lineNumber);
+        } else if (isJava(filePath)) {
+            parseJava(trimmed, filePath, lineNumber);
+        } else if (isPHP(filePath)) {
+            parsePHP(trimmed, filePath, lineNumber);
+        } else if (isBash(filePath)) {
+            parseBash(trimmed, filePath, lineNumber);
+        } else if (isRuby(filePath)) {
+            parseRuby(trimmed, filePath, lineNumber);
+        } else if (isRust(filePath)) {
+            parseRust(trimmed, filePath, lineNumber);
         } else if (isGo(filePath)) {
             parseGo(trimmed, filePath, lineNumber);
         } else if (isPython(filePath)) {
@@ -174,7 +218,7 @@ void SymbolIndex::parseFile(const std::string& filePath) {
         } else if (isTypeScriptOrJavaScript(filePath)) {
             parseTypeScriptJavaScript(trimmed, filePath, lineNumber);
         } else {
-            parseLineForSymbols(trimmed, filePath, lineNumber);
+            parseLineForSymbols(trimmed, filePath, lineNumber);  // Unknown file type - generic parsing
         }
         lineNumber++;
     }
@@ -819,5 +863,162 @@ void SymbolIndex::parseSwift(const std::string& line, const std::string& filePat
         std::string importName = match[1].str();
         addSymbol(Symbol(importName, SymbolType::SWIFT_IMPORT, filePath, lineNumber, line));
         return;
+    }
+} 
+
+void SymbolIndex::parseKotlin(const std::string& line, const std::string& filePath, int lineNumber) {
+    std::smatch match;
+    // Match top-level functions: fun functionName(
+    std::regex functionRegex(R"(\bfun\s+(\w+)\s*\()");
+    if (std::regex_search(line, match, functionRegex)) {
+        std::string name = match[1].str();
+        addSymbol(Symbol(name, SymbolType::FUNCTION, filePath, lineNumber, line));
+    }
+    // Match classes: class ClassName
+    std::regex classRegex(R"(\bclass\s+(\w+))");
+    if (std::regex_search(line, match, classRegex)) {
+        std::string name = match[1].str();
+        addSymbol(Symbol(name, SymbolType::CLASS, filePath, lineNumber, line));
+    }
+    // Match objects: object ObjectName
+    std::regex objectRegex(R"(\bobject\s+(\w+))");
+    if (std::regex_search(line, match, objectRegex)) {
+        std::string name = match[1].str();
+        addSymbol(Symbol(name, SymbolType::CLASS, filePath, lineNumber, line));
+    }
+}
+
+void SymbolIndex::parseJava(const std::string& line, const std::string& filePath, int lineNumber) {
+    std::smatch match;
+    
+    // Match classes: public class ClassName, class ClassName
+    std::regex classRegex(R"(\b(?:public\s+|private\s+|protected\s+)?(?:abstract\s+|final\s+)?class\s+(\w+))");
+    if (std::regex_search(line, match, classRegex)) {
+        std::string name = match[1].str();
+        addSymbol(Symbol(name, SymbolType::CLASS, filePath, lineNumber, line));
+    }
+    
+    // Match interfaces: public interface InterfaceName, interface InterfaceName
+    std::regex interfaceRegex(R"(\b(?:public\s+)?interface\s+(\w+))");
+    if (std::regex_search(line, match, interfaceRegex)) {
+        std::string name = match[1].str();
+        addSymbol(Symbol(name, SymbolType::CLASS, filePath, lineNumber, line));
+    }
+    
+    // Match methods: public void methodName(, private int methodName(
+    std::regex methodRegex(R"(\b(?:public\s+|private\s+|protected\s+)?(?:static\s+)?(?:final\s+)?(?:\w+\s+)?(\w+)\s*\()");
+    if (std::regex_search(line, match, methodRegex)) {
+        std::string name = match[1].str();
+        // Skip constructor calls and common keywords
+        if (name != "if" && name != "while" && name != "for" && name != "switch" && name != "catch") {
+            addSymbol(Symbol(name, SymbolType::FUNCTION, filePath, lineNumber, line));
+        }
+    }
+}
+
+void SymbolIndex::parsePHP(const std::string& line, const std::string& filePath, int lineNumber) {
+    std::smatch match;
+    
+    // Match functions: function functionName(
+    std::regex functionRegex(R"(\bfunction\s+(\w+)\s*\()");
+    if (std::regex_search(line, match, functionRegex)) {
+        std::string name = match[1].str();
+        addSymbol(Symbol(name, SymbolType::FUNCTION, filePath, lineNumber, line));
+    }
+    
+    // Match classes: class ClassName
+    std::regex classRegex(R"(\bclass\s+(\w+))");
+    if (std::regex_search(line, match, classRegex)) {
+        std::string name = match[1].str();
+        addSymbol(Symbol(name, SymbolType::CLASS, filePath, lineNumber, line));
+    }
+    
+    // Match variables: $variableName
+    std::regex variableRegex(R"(\$(\w+))");
+    if (std::regex_search(line, match, variableRegex)) {
+        std::string name = "$" + match[1].str();
+        addSymbol(Symbol(name, SymbolType::VARIABLE, filePath, lineNumber, line));
+    }
+}
+
+void SymbolIndex::parseBash(const std::string& line, const std::string& filePath, int lineNumber) {
+    std::smatch match;
+    
+    // Match functions: function_name() or function function_name()
+    std::regex functionRegex(R"((?:function\s+)?(\w+)\s*\(\s*\))");
+    if (std::regex_search(line, match, functionRegex)) {
+        std::string name = match[1].str();
+        addSymbol(Symbol(name, SymbolType::FUNCTION, filePath, lineNumber, line));
+    }
+    
+    // Match variables: VARIABLE_NAME=
+    std::regex variableRegex(R"(^([A-Z_][A-Z0-9_]*)\s*=)");
+    if (std::regex_search(line, match, variableRegex)) {
+        std::string name = match[1].str();
+        addSymbol(Symbol(name, SymbolType::VARIABLE, filePath, lineNumber, line));
+    }
+}
+
+void SymbolIndex::parseRuby(const std::string& line, const std::string& filePath, int lineNumber) {
+    std::smatch match;
+    
+    // Match methods: def method_name
+    std::regex methodRegex(R"(\bdef\s+(\w+))");
+    if (std::regex_search(line, match, methodRegex)) {
+        std::string name = match[1].str();
+        addSymbol(Symbol(name, SymbolType::FUNCTION, filePath, lineNumber, line));
+    }
+    
+    // Match classes: class ClassName
+    std::regex classRegex(R"(\bclass\s+(\w+))");
+    if (std::regex_search(line, match, classRegex)) {
+        std::string name = match[1].str();
+        addSymbol(Symbol(name, SymbolType::CLASS, filePath, lineNumber, line));
+    }
+    
+    // Match modules: module ModuleName
+    std::regex moduleRegex(R"(\bmodule\s+(\w+))");
+    if (std::regex_search(line, match, moduleRegex)) {
+        std::string name = match[1].str();
+        addSymbol(Symbol(name, SymbolType::CLASS, filePath, lineNumber, line));
+    }
+}
+
+void SymbolIndex::parseRust(const std::string& line, const std::string& filePath, int lineNumber) {
+    std::smatch match;
+    
+    // Match functions: fn function_name(, pub fn function_name(
+    std::regex functionRegex(R"(\b(?:pub\s+)?fn\s+(\w+)\s*\()");
+    if (std::regex_search(line, match, functionRegex)) {
+        std::string name = match[1].str();
+        addSymbol(Symbol(name, SymbolType::FUNCTION, filePath, lineNumber, line));
+    }
+    
+    // Match structs: struct StructName, pub struct StructName
+    std::regex structRegex(R"(\b(?:pub\s+)?struct\s+(\w+))");
+    if (std::regex_search(line, match, structRegex)) {
+        std::string name = match[1].str();
+        addSymbol(Symbol(name, SymbolType::CLASS, filePath, lineNumber, line));
+    }
+    
+    // Match enums: enum EnumName, pub enum EnumName
+    std::regex enumRegex(R"(\b(?:pub\s+)?enum\s+(\w+))");
+    if (std::regex_search(line, match, enumRegex)) {
+        std::string name = match[1].str();
+        addSymbol(Symbol(name, SymbolType::CLASS, filePath, lineNumber, line));
+    }
+    
+    // Match traits: trait TraitName, pub trait TraitName
+    std::regex traitRegex(R"(\b(?:pub\s+)?trait\s+(\w+))");
+    if (std::regex_search(line, match, traitRegex)) {
+        std::string name = match[1].str();
+        addSymbol(Symbol(name, SymbolType::CLASS, filePath, lineNumber, line));
+    }
+    
+    // Match impls: impl StructName, impl TraitName for StructName
+    std::regex implRegex(R"(\bimpl\s+(?:\w+\s+for\s+)?(\w+))");
+    if (std::regex_search(line, match, implRegex)) {
+        std::string name = "impl " + match[1].str();
+        addSymbol(Symbol(name, SymbolType::CLASS, filePath, lineNumber, line));
     }
 } 
