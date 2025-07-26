@@ -260,6 +260,33 @@ The Windows executable provides:
 navix-windows.exe                       # Portable executable
 ```
 
+## Documentation
+
+📚 **Complete Documentation Available!**
+
+For comprehensive documentation including API reference, development guides, troubleshooting, and advanced usage examples, see:
+
+**[📖 DOCUMENTATION.md](DOCUMENTATION.md)**
+
+### Documentation Sections:
+
+- **📋 Overview** - Project features and supported languages
+- **🏗️ Architecture** - Core components and class hierarchy  
+- **⚙️ Installation** - Platform-specific setup instructions
+- **🚀 Usage Guide** - Basic and advanced commands
+- **📖 API Reference** - Complete class and method documentation
+- **🔧 Development Guide** - Building from source and extending
+- **🛠️ Troubleshooting** - Common issues and solutions
+- **💡 Examples** - Practical usage and integration examples
+- **🤝 Contributing** - Guidelines for contributors
+
+### Quick Links:
+
+- **[Installation Guide](DOCUMENTATION.md#installation)** - Get started quickly
+- **[API Reference](DOCUMENTATION.md#api-reference)** - Complete API documentation
+- **[Usage Examples](DOCUMENTATION.md#examples)** - Practical examples
+- **[Troubleshooting](DOCUMENTATION.md#troubleshooting)** - Solve common issues
+
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on contributing to this project.
