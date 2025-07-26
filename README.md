@@ -10,6 +10,39 @@ A powerful C++ file navigator with symbol indexing and autocomplete capabilities
 
 ![Navix Screenshot](https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgQxYHkuUiIny9-VGPJLDEtCclT_597S87Hk4OS3gT6aC0-vaDbp-cbnl_PPG3DKnji02mH8KNn6RVASpD8xFZfZb4LcWz3N9aZtx4RoH67PvDwXoqjxY7s28jcPBO9xP2cnSoPTp-jhZ8NEBDrP_QPGrInik3Nvo1M_kzykg2F-i-NKurir-3JDNMuTRea/w640-h386/Screenshot%202025-07-26%20at%2014.00.05.png)
 
+## 📥 Download
+
+**Latest Release: v0.1** - Ready-to-use binaries for all platforms
+
+[![Download](https://img.shields.io/badge/Download-v0.1-blue.svg)](https://github.com/zidniryi/navix/releases/tag/v0.1)
+
+### Platform Downloads
+
+| Platform | Download | Description |
+|----------|----------|-------------|
+| 🐧 **Linux** | [navix-linux](https://github.com/zidniryi/navix/releases/tag/v0.1) | Native Linux binary with ncurses |
+| 🍎 **macOS** | [navix-macos](https://github.com/zidniryi/navix/releases/tag/v0.1) | Native macOS binary with ncurses |
+| 🪟 **Windows** | [navix-windows.exe](https://github.com/zidniryi/navix/releases/tag/v0.1) | Windows executable with Console API |
+| 📦 **All Platforms** | [View All Assets](https://github.com/zidniryi/navix/releases/tag/v0.1) | Complete release with all binaries |
+
+### Quick Start
+
+```bash
+# Linux/macOS - Download and run
+wget https://github.com/zidniryi/navix/releases/download/v0.1/navix-native
+chmod +x navix-native
+./navix-native /path/to/your/project
+
+# Windows - Download and run
+# Download navix-windows.exe from releases
+navix-windows.exe C:\path\to\your\project
+```
+
+### Installation Options
+
+- **Direct Download**: Ready-to-use binaries (recommended)
+- **Package Managers**: Debian (.deb), macOS (.pkg) installers
+- **Build from Source**: Full compilation guide below
 
 ## Features
 
