@@ -1,6 +1,13 @@
-# Navix - Navigate & Index
+# 🚀 NAVIX - Navigate & Index
+
+**Lightning-fast for your navigation**
 
 A powerful C++ file navigator with symbol indexing and autocomplete capabilities.
+
+[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/your-repo/navix)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![ncurses](https://img.shields.io/badge/TUI-ncurses-green.svg)](https://invisible-island.net/ncurses/)
+
 
 ## Features
 
