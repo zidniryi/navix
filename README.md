@@ -266,7 +266,7 @@ navix-windows.exe                       # Portable executable
 
 For comprehensive documentation including API reference, development guides, troubleshooting, and advanced usage examples, see:
 
-**[📖 DOCUMENTATION.md](DOCUMENTATION.md)**
+**[📖 DOCUMENTATION.md](https://zidniryi.xyz/navix.html)**
 
 ### Documentation Sections:
 
