@@ -2,13 +2,13 @@
 
 **Lightning-fast for your navigation**
 
-![Navix Screenshot](https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgQxYHkuUiIny9-VGPJLDEtCclT_597S87Hk4OS3gT6aC0-vaDbp-cbnl_PPG3DKnji02mH8KNn6RVASpD8xFZfZb4LcWz3N9aZtx4RoH67PvDwXoqjxY7s28jcPBO9xP2cnSoPTp-jhZ8NEBDrP_QPGrInik3Nvo1M_kzykg2F-i-NKurir-3JDNMuTRea/w640-h386/Screenshot%202025-07-26%20at%2014.00.05.png)
-
-A powerful C++ file navigator with symbol indexing and autocomplete capabilities.
-
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/your-repo/navix)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![ncurses](https://img.shields.io/badge/TUI-ncurses-green.svg)](https://invisible-island.net/ncurses/)
+
+A powerful C++ file navigator with symbol indexing and autocomplete capabilities.
+
+![Navix Screenshot](https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgQxYHkuUiIny9-VGPJLDEtCclT_597S87Hk4OS3gT6aC0-vaDbp-cbnl_PPG3DKnji02mH8KNn6RVASpD8xFZfZb4LcWz3N9aZtx4RoH67PvDwXoqjxY7s28jcPBO9xP2cnSoPTp-jhZ8NEBDrP_QPGrInik3Nvo1M_kzykg2F-i-NKurir-3JDNMuTRea/w640-h386/Screenshot%202025-07-26%20at%2014.00.05.png)
 
 
 ## Features
